@@ -6,7 +6,6 @@ defmodule ReatherTest do
 
   defmodule Target do
     require Reather.Macros
-    import Reather
     import Reather.Macros
 
     reather foo(a, b) do
@@ -21,7 +20,7 @@ defmodule ReatherTest do
     end
   end
 
-  test "greets the world" do
+  test "Simple reather" do
     assert Target.foo(1, 2) |> Reather.run() == %Right{right: 2}
   end
 end

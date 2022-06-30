@@ -1,19 +1,10 @@
 defmodule Reather.Macros do
   defmacro reather(head, do: body) do
-    IO.inspect(head)
-    IO.inspect(body)
-    _built_body = build_body(body)
-
-    # IO.inspect(
-    #  {:fn, ctx,
-    #   [
-    #     {:->, ctx, [args, body]}
-    #   ]}
-    # )
+    built_body = build_body(body)
 
     quote do
       def unquote(head) do
-        # unquote(body)
+        unquote(built_body)
       end
     end
   end
@@ -29,30 +20,47 @@ defmodule Reather.Macros do
   def parse_exprs(exprs) do
     [ret | body] = exprs |> Enum.reverse()
 
-    IO.inspect("return:")
-
-    IO.inspect(
+    wrapped_ret =
       quote do
         Reather.Macros.wrap_reather(unquote(ret))
       end
-    )
 
-    body
-    |> Enum.map(&parse_expr/1)
+    body |> List.foldl(wrapped_ret, &parse_expr/2)
   end
 
   def wrap_reather(%Reather{} = r), do: r
   def wrap_reather(value), do: Reather.of(value)
 
-  def parse_expr({:<-, _ctx, [lhs, rhs]}) do
-    IO.inspect("<-:")
-    IO.inspect(lhs)
-    IO.inspect(rhs)
+  def parse_expr({:<-, _ctx, [lhs, rhs]}, acc) do
+    quote do
+      unquote(rhs)
+      |> Reather.Macros.wrap_reather()
+      |> (fn %Reather{} = r ->
+            fn env ->
+              r
+              |> Reather.run(env)
+              |> case do
+                %Reather.Left{} = left ->
+                  left
+
+                %Reather.Right{right: value} ->
+                  (fn unquote(lhs) ->
+                     unquote(acc)
+                   end).(value)
+                  |> Reather.run(env)
+              end
+            end
+            |> Reather.new()
+          end).()
+    end
   end
 
-  def parse_expr({:let, _ctx1, [{:=, _ctx2, [lhs, rhs]}]}) do
-    IO.inspect("let:")
-    IO.inspect(lhs)
-    IO.inspect(rhs)
+  def parse_expr({:let, _ctx1, [{:=, _ctx2, [lhs, rhs]}]}, acc) do
+    quote do
+      unquote(rhs)
+      |> (fn unquote(lhs) ->
+            unquote(acc)
+          end).()
+    end
   end
 end
