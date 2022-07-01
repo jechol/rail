@@ -1,11 +1,9 @@
 # Used by "mix format"
 locals_without_parens = [
   let: 1,
-  return: 1,
   reather: 1,
   reather: 2,
-  reatherp: 2,
-  assert_ast: 1
+  reatherp: 2
 ]
 
 [
