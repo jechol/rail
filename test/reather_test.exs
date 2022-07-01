@@ -3,6 +3,7 @@ defmodule ReatherTest do
   doctest Reather
 
   alias Reather.Right
+  import ExUnit.CaptureIO
 
   defmodule Target do
     require Reather.Macros
@@ -16,11 +17,17 @@ defmodule ReatherTest do
     end
 
     reather bar(a) do
-      -a
+      -a |> IO.inspect()
     end
   end
 
   test "Simple reather" do
+    # IO.inspect will be run lazily.
+    {%Reather{}, ""} =
+      with_io(fn ->
+        Target.bar(1)
+      end)
+
     assert Target.foo(1, 2) |> Reather.run() == %Right{right: 2}
   end
 end

@@ -20,18 +20,15 @@ defmodule Reather do
 
   def new(fun), do: %Reather{reather: fun}
 
-  def of(either) do
-    case either do
-      %Left{} = left ->
-        Reather.new(fn _env -> left end)
-
-      %Right{} = right ->
-        Reather.new(fn _env -> right end)
-
-      value ->
-        Reather.new(fn _env -> %Right{right: value} end)
+  def either(v) do
+    case v do
+      %Left{} = left -> left
+      %Right{} = right -> right
+      value -> %Right{right: value}
     end
   end
+
+  def of(v), do: Reather.new(fn _ -> either(v) end)
 
   def wrap(%Reather{} = r), do: r
   def wrap(v), do: of(v)
