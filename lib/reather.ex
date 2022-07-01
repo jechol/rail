@@ -4,7 +4,7 @@ defmodule Reather do
 
   defmacro __using__([]) do
     quote do
-      import Reather.Macros, only: [reather: 2, reatherp: 2]
+      import Reather.Macros, only: [reather: 1, reather: 2, reatherp: 2]
       require Reather.Macros
       alias Reather.{Left, Right}
     end

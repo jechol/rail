@@ -9,6 +9,10 @@ defmodule Reather.Macros do
     end
   end
 
+  defmacro reather(do: body) do
+    build_body(body)
+  end
+
   defmacro reatherp(head, do: body) do
     built_body = build_body(body)
 
