@@ -1,13 +1,12 @@
 defmodule ReatherTest do
   use ExUnit.Case
-  doctest Reather
-
-  alias Reather.Right
+  use Reather
   import ExUnit.CaptureIO
 
+  doctest Reather
+
   defmodule Target do
-    require Reather.Macros
-    import Reather.Macros
+    use Reather
 
     reather foo(a, b) do
       let x = a + b

@@ -2,6 +2,14 @@ defmodule Reather do
   alias Reather.{Left, Right}
   defstruct [:reather]
 
+  defmacro __using__([]) do
+    quote do
+      import Reather.Macros, only: [reather: 2, reatherp: 2]
+      require Reather.Macros
+      alias Reather.{Left, Right}
+    end
+  end
+
   def ask(), do: Reather.new(fn env -> right(env) end)
 
   def run(%Reather{reather: fun}, arg \\ %{}) do
