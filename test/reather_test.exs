@@ -20,6 +20,20 @@ defmodule ReatherTest do
     end
 
     reather baz(a), do: a + 1
+
+    reather qux() do
+      env <- Reather.ask()
+      x <- quux() |> Reather.run(Map.put(env, :a, 1))
+      y = env.b
+
+      x + y
+    end
+
+    reather quux() do
+      env <- Reather.ask()
+
+      env.a
+    end
   end
 
   test "Simple reather" do
@@ -41,12 +55,18 @@ defmodule ReatherTest do
   test "inline reather" do
     r =
       reather do
-        x <- Target.bar(1)
-        y <- Target.baz(1)
+        x <- Target.baz(1)
+        y <- Target.baz(1) |> Reather.inspect()
 
         x + y
       end
 
-    assert Reather.run(r) == {:ok, 1}
+    assert fn -> Reather.run(r) end
+           |> with_io() ==
+             {{:ok, 4}, "{:ok, 2}\n"}
+  end
+
+  test "use environment" do
+    assert Target.qux() |> Reather.run(%{b: 1}) == {:ok, 2}
   end
 end
