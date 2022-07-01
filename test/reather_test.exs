@@ -31,11 +31,11 @@ defmodule ReatherTest do
 
     assert with_io(fn ->
              Reather.run(r)
-           end) == {%Right{right: -1}, "-1\n"}
+           end) == {{:ok, -1}, "-1\n"}
 
-    assert Target.foo(1, 2) |> Reather.run() == %Right{right: 2}
+    assert Target.foo(1, 2) |> Reather.run() == {:ok, 2}
 
-    assert Target.baz(1) |> Reather.run() == %Right{right: 2}
+    assert Target.baz(1) |> Reather.run() == {:ok, 2}
   end
 
   test "inline reather" do
@@ -47,6 +47,6 @@ defmodule ReatherTest do
         x + y
       end
 
-    assert Reather.run(r) == %Right{right: 1}
+    assert Reather.run(r) == {:ok, 1}
   end
 end

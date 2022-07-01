@@ -51,10 +51,10 @@ defmodule Reather.Macros do
               r
               |> Reather.run(env)
               |> case do
-                %Reather.Left{} = left ->
-                  left
+                {:error, _} = error ->
+                  error
 
-                %Reather.Right{right: value} ->
+                {:ok, value} ->
                   (fn unquote(lhs) ->
                      unquote(acc)
                    end).(value)
