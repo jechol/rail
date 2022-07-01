@@ -2,6 +2,18 @@ defmodule Reather do
   alias Reather.{Left, Right}
   defstruct [:reather]
 
+  def ask(), do: Reather.new(fn env -> right(env) end)
+
+  def run(%Reather{reather: fun}, arg \\ %{}) do
+    fun.(arg)
+  end
+
+  def inspect(%Reather{} = r, opts \\ []) do
+    Reather.new(fn env ->
+      r |> Reather.run(env) |> IO.inspect(opts)
+    end)
+  end
+
   def left(error), do: %Left{left: error}
 
   def right(value), do: %Right{right: value}
@@ -23,10 +35,4 @@ defmodule Reather do
 
   def wrap(%Reather{} = r), do: r
   def wrap(v), do: of(v)
-
-  def ask, do: Reather.new(fn env -> right(env) end)
-
-  def run(%Reather{reather: fun}, arg \\ %{}) do
-    fun.(arg)
-  end
 end
