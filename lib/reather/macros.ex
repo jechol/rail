@@ -66,7 +66,7 @@ defmodule Reather.Macros do
     end
   end
 
-  def parse_expr({:let, _ctx1, [{:=, _ctx2, [lhs, rhs]}]}, acc) do
+  def parse_expr({:=, _ctx, [lhs, rhs]}, acc) do
     quote do
       unquote(rhs)
       |> (fn unquote(lhs) ->

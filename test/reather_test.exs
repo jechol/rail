@@ -9,7 +9,7 @@ defmodule ReatherTest do
     use Reather
 
     reather foo(a, b) do
-      let x = a + b
+      x = a + b
       y <- bar(a)
 
       x + y
