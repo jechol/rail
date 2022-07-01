@@ -9,6 +9,16 @@ defmodule Reather.Macros do
     end
   end
 
+  defmacro reatherp(head, do: body) do
+    built_body = build_body(body)
+
+    quote do
+      defp unquote(head) do
+        unquote(built_body)
+      end
+    end
+  end
+
   def build_body({:__block__, _ctx, exprs}) do
     parse_exprs(exprs)
   end
