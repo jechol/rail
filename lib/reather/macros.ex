@@ -22,19 +22,16 @@ defmodule Reather.Macros do
 
     wrapped_ret =
       quote do
-        Reather.Macros.wrap_reather(unquote(ret))
+        Reather.wrap(unquote(ret))
       end
 
     body |> List.foldl(wrapped_ret, &parse_expr/2)
   end
 
-  def wrap_reather(%Reather{} = r), do: r
-  def wrap_reather(value), do: Reather.of(value)
-
   def parse_expr({:<-, _ctx, [lhs, rhs]}, acc) do
     quote do
       unquote(rhs)
-      |> Reather.Macros.wrap_reather()
+      |> Reather.wrap()
       |> (fn %Reather{} = r ->
             fn env ->
               r

@@ -21,6 +21,9 @@ defmodule Reather do
     end
   end
 
+  def wrap(%Reather{} = r), do: r
+  def wrap(v), do: of(v)
+
   def ask, do: Reather.new(fn env -> right(env) end)
 
   def run(%Reather{reather: fun}, arg \\ %{}) do
