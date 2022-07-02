@@ -12,6 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     name: OTP ${{matrix.versions.otp}} / Elixir ${{matrix.versions.elixir}}
     strategy:
+      fail-fast: false
       matrix:
         versions:
           - { otp: "25.0.0", elixir: "1.13.4" }
