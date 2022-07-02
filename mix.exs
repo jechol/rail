@@ -8,6 +8,7 @@ defmodule Reather.MixProject do
       elixir: "~> 1.13",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
+      package: package(),
       test_coverage: [tool: ExCoveralls],
       preferred_cli_env: [
         coveralls: :test,
@@ -24,6 +25,14 @@ defmodule Reather.MixProject do
   def application do
     [
       extra_applications: [:logger]
+    ]
+  end
+
+  defp package do
+    [
+      licenses: ["MIT"],
+      links: %{"GitHub" => "https://github.com/SeokminHong/reather-lite"},
+      maintainers: ["Seokmin Hong(ghdtjrald240@gmail.com)"]
     ]
   end
 
