@@ -48,6 +48,24 @@ defmodule Reather do
 
   @doc """
   Convert the value with `ok` or `error` tuple.
+
+  ## Examples
+      iex> Reather.either(:ok)
+      {:ok, nil}
+      iex> Reather.either(:error)
+      {:error, nil}
+      iex> Reather.either({:ok, 3})
+      {:ok, 3}
+      iex> Reather.either({:error, "error!"})
+      {:error, "error!"}
+      iex> Reather.either({:ok, 1, 2})
+      {:ok, {1, 2}}
+      iex> Reather.either({:error, "error", :invalid})
+      {:error, {"error", :invalid}}
+      iex> Reather.either({1, 2})
+      {:ok, {1, 2}}
+      iex> Reather.either(1)
+      {:ok, 1}
   """
   def either(v) do
     case v do
@@ -69,7 +87,7 @@ defmodule Reather do
             {result, Tuple.delete_at(value, 0)}
 
           _ ->
-            value
+            {:ok, value}
         end
 
       value ->
