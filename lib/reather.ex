@@ -64,6 +64,8 @@ defmodule Reather do
       {:error, {"error", :invalid}}
       iex> Reather.either({1, 2})
       {:ok, {1, 2}}
+      iex> Reather.either({})
+      {:ok, {}}
       iex> Reather.either(1)
       {:ok, 1}
   """
@@ -81,7 +83,7 @@ defmodule Reather do
       {:ok, _} = ok ->
         ok
 
-      value when is_tuple(value) ->
+      value when is_tuple(value) and tuple_size(value) > 0 ->
         case elem(value, 0) do
           result when result in [:ok, :error] ->
             {result, Tuple.delete_at(value, 0)}
