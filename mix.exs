@@ -5,6 +5,7 @@ defmodule Reather.MixProject do
     [
       app: :reather_lite,
       description: "A lighter version of Reather; Combination of Reader and Either monads",
+      docs: docs(),
       version: "0.1.0",
       elixir: "~> 1.13",
       start_permanent: Mix.env() == :prod,
@@ -41,7 +42,21 @@ defmodule Reather.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:excoveralls, "~> 0.10", only: :test}
+      {:excoveralls, "~> 0.10", only: :test},
+      {:ex_doc, ">= 0.0.0", only: :dev, runtime: false}
+    ]
+  end
+
+  defp docs() do
+    [
+      main: "readme",
+      name: "reather-lite",
+      canonical: "http://hexdocs.pm/reather_lite",
+      source_url: "https://github.com/SeokminHong/reather-lite",
+      extras: [
+        "README.md",
+        "LICENSE.md"
+      ]
     ]
   end
 end
