@@ -2,9 +2,9 @@ name: test
 on:
   push:
     paths:
-      - .github/workflows
-      - lib
-      - test
+      - .github/workflows/**
+      - lib/**
+      - test/**
       - mix.exs
 
 jobs:
