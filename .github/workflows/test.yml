@@ -17,9 +17,6 @@ jobs:
         versions:
           - { otp: "25.0.0", elixir: "1.13.4" }
           - { otp: "24.3.4", elixir: "1.13.0" }
-          - { otp: "24.3.4", elixir: "1.12.3" }
-          - { otp: "24.3.4", elixir: "1.11.4" }
-          - { otp: "23.3.4.14", elixir: "1.11.4" }
     env:
       MIX_ENV: test
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -5,7 +5,7 @@ defmodule Reather.MixProject do
     [
       app: :reather_lite,
       version: "0.1.0",
-      elixir: "~> 1.11",
+      elixir: "~> 1.13",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
       test_coverage: [tool: ExCoveralls],
@@ -14,7 +14,8 @@ defmodule Reather.MixProject do
         "coveralls.detail": :test,
         "coveralls.post": :test,
         "coveralls.html": :test,
-        "coveralls.lcov": :test
+        "coveralls.lcov": :test,
+        "coveralls.github": :test
       ]
     ]
   end
