@@ -165,3 +165,7 @@ defmodule Target do
   end
 end
 ```
+
+## LICENSE
+
+[MIT](./LICENSE)
