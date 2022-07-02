@@ -105,6 +105,12 @@ defmodule Reather do
   @doc """
   Create a `Reather` from the value.
   If the value is `Reather`, it will be returned as is.
+
+  ## Example
+      iex> %Reather{} = Reather.wrap(:ok)
+
+      iex> r = %Reather{}
+      iex> ^r = Reather.wrap(r)
   """
   def wrap(%Reather{} = r), do: r
   def wrap(v), do: of(v)
