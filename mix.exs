@@ -55,7 +55,7 @@ defmodule Reather.MixProject do
       source_url: "https://github.com/SeokminHong/reather-lite",
       extras: [
         "README.md",
-        "LICENSE.md"
+        "LICENSE"
       ]
     ]
   end
