@@ -1,5 +1,7 @@
 # ReatherLite
 
+[![test](https://github.com/SeokminHong/reather_lite/actions/workflows/test.yml/badge.svg)](https://github.com/SeokminHong/reather_lite/actions/workflows/test.yml)
+
 `Reather` is a shortcut of `Reader` + `Either` monads pattern.
 
 It makes you define and unwrap the `Reather` easiliy by using `reather` macro.
