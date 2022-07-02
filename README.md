@@ -6,6 +6,9 @@
 
 It makes you define and unwrap the `Reather` easiliy by using `reather` macro.
 
+The original idea is from [jechol/reather](https://github.com/jechol/reather), and this is a
+lite version without using [Witchcraft](https://witchcrafters.github.io/).
+
 ## Installation
 
 ```elixir
