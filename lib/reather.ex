@@ -47,14 +47,33 @@ defmodule Reather do
   def new(fun), do: %Reather{reather: fun}
 
   @doc """
-  Wrap the value with `ok` or `error` tuple.
-  If it is already wrapped, it will be returned as is.
+  Convert the value with `ok` or `error` tuple.
   """
   def either(v) do
     case v do
-      {:error, _} = error -> error
-      {:ok, _} = ok -> ok
-      value -> {:ok, value}
+      :error ->
+        {:error, nil}
+
+      {:error, _} = error ->
+        error
+
+      :ok ->
+        {:ok, nil}
+
+      {:ok, _} = ok ->
+        ok
+
+      value when is_tuple(value) ->
+        case elem(value, 0) do
+          result when result in [:ok, :error] ->
+            {result, Tuple.delete_at(value, 0)}
+
+          _ ->
+            value
+        end
+
+      value ->
+        {:ok, value}
     end
   end
 
