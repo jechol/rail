@@ -4,6 +4,7 @@ defmodule Reather.MixProject do
   def project do
     [
       app: :reather_lite,
+      description: "A lighter version of Reather; Combination of Reader and Either monads",
       version: "0.1.0",
       elixir: "~> 1.13",
       start_permanent: Mix.env() == :prod,
