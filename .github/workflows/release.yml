@@ -19,4 +19,6 @@ jobs:
       - name: Publish to Hex.pm
         env:
           HEX_API_KEY: ${{ secrets.HEX_API_KEY }}
-        run: mix hex.publish --yes
+        run: |
+          mix deps.get
+          mix hex.publish --yes
