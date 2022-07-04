@@ -1,6 +1,9 @@
 # ReatherLite
 
 [![test](https://github.com/SeokminHong/reather_lite/actions/workflows/test.yml/badge.svg)](https://github.com/SeokminHong/reather_lite/actions/workflows/test.yml)
+[![Coverage Status](https://coveralls.io/repos/github/SeokminHong/reather-lite/badge.svg?branch=main)](https://coveralls.io/github/SeokminHong/reather-lite?branch=main)
+[![Hex.pm](https://img.shields.io/hexpm/v/reather_lite)](https://hex.pm/packages/reather_lite)
+[![GitHub](https://img.shields.io/github/license/SeokminHong/reather-lite)](https://github.com/SeokminHong/reather-lite/blob/main/LICENSE)
 
 `Reather` is a shortcut of `Reader` + `Either` monads pattern.
 
