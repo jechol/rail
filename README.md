@@ -4,7 +4,7 @@
 
 `Reather` is a shortcut of `Reader` + `Either` monads pattern.
 
-It makes you define and unwrap the `Reather` easiliy by using `reather` macro.
+It makes you define and unwrap the `Reather` easiliy by using the `reather` macro.
 
 The original idea is from [jechol/reather](https://github.com/jechol/reather), and this is a
 lite version without using [Witchcraft](https://witchcrafters.github.io/).
@@ -38,7 +38,7 @@ iex> Target.foo(1, 1)
 %Reather{...}
 ```
 
-The `Reather` is lazily evaluated, so it do nothing until call `Reather.run/1`.
+Since the `Reather` is lazily evaluated, it does nothing until call `Reather.run/1`.
 
 ```elixir
 iex> Target.foo(1, 1) |> Reather.run()
@@ -47,7 +47,7 @@ iex> Target.foo(1, 1) |> Reather.run()
 
 The result of `Reather` is always `{:ok, value}` or `{:error, error}`.
 
-In `reather` block, the `ok` tuple will be automatically unwrapped with `<-` operator.
+In a `reather` block, the `ok` tuple will be automatically unwrapped by a `<-` operator.
 
 ```elixir
 defmodule Target do
@@ -67,7 +67,7 @@ iex> Target.foo() |> Reather.run()
 {:ok, 6}
 ```
 
-Also, a `Reather` unwrap into a value with `<-` operator.
+Also, a `Reather` unwrap into a value with a `<-` operator.
 
 ```elixir
 defmodule Target do
@@ -86,8 +86,8 @@ iex> Target.foo(1, 1) |> Reather.run()
 {:ok, 3}
 ```
 
-Because of the either monad, when the `<-` operator meets the error tuple,
-the reather will return immediately.
+Because of the either monad, when the `<-` operator meets an error tuple,
+the reather will return it immediately.
 
 ```elixir
 defmodule Target do
@@ -126,7 +126,7 @@ iex> r |> Reather.run()
 ### `Reather.ask`
 
 Because of the `Reather` is a combination of reader and either monads,
-it also provide an environment.
+it also provides an environment.
 
 The providen environment can be accessed with `Reather.ask/0`.
 
