@@ -41,7 +41,7 @@ iex> Target.foo(1, 1)
 %Reather{...}
 ```
 
-Since the `Reather` is lazily evaluated, it does nothing until call `Reather.run/1`.
+Since the `Reather` is lazily evaluated, it does nothing until call `Reather.run/2`.
 
 ```elixir
 iex> Target.foo(1, 1) |> Reather.run()
