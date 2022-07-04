@@ -10,8 +10,13 @@ jobs:
     steps:
       - name: Check out
         uses: actions/checkout@v3
+      
+      - uses: erlef/setup-beam@v1
+        with:
+          otp-version: '25.0.0'
+          elixir-version: '1.13.4'
 
       - name: Publish to Hex.pm
-        uses: erlangpack/github-action@v3
         env:
           HEX_API_KEY: ${{ secrets.HEX_API_KEY }}
+        run: mix hex.publish --yes
