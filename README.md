@@ -169,6 +169,40 @@ defmodule Target do
 end
 ```
 
+### `Reather.map`
+
+You can `map` a function to a `Reather`.
+The given function will be applied lazily when the result of
+the reather is an `ok` tuple.
+
+```elixir
+defmodule Target do
+  use Reather
+
+  reather foo() do
+    x <- {:ok, 1}
+
+    x
+  end
+
+  reather bar() do
+    x <- {:error, 1}
+
+    x
+  end
+end
+
+iex> Target.foo()
+...> |> Reather.map(fn x -> x + 1 end)
+...> |> Reather.run()
+{:ok, 2}
+
+iex> Target.bar()
+...> |> Reather.map(fn x -> x + 1 end)
+...> |> Reather.run()
+{:error, 1}
+```
+
 ## LICENSE
 
 [MIT](./LICENSE)
