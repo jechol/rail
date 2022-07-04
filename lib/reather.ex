@@ -1,6 +1,9 @@
 defmodule Reather do
   defstruct [:reather]
 
+  require Reather.Macros
+  import Reather.Macros
+
   @moduledoc """
   Reather is the combined form of Reader and Either monad.
   A `Reather` wrapps an environment and the child functions can
@@ -27,6 +30,29 @@ defmodule Reather do
   """
   def run(%Reather{reather: fun}, arg \\ %{}) do
     fun.(arg)
+  end
+
+  @doc """
+  Map the function to the reather.
+
+  `map` is lazy, so it's never computed until explicitly call
+  `Reather.run/2`.
+
+      iex> r = reather do
+      ...>       x <- {:ok, 1}
+      ...>       x
+      ...>     end
+      iex> r
+      ...> |> Reather.map(fn x -> x + 1 end)
+      ...> |> Reather.run()
+      {:ok, 2}
+  """
+  def map(r, fun) do
+    reather do
+      x <- r
+
+      fun.(x)
+    end
   end
 
   @doc """
