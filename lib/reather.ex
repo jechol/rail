@@ -3,6 +3,7 @@ defmodule Reather do
 
   require Reather.Macros
   import Reather.Macros
+  alias Reather.Either
 
   @moduledoc """
   Reather is the combined form of Reader and Either monad.
@@ -17,6 +18,7 @@ defmodule Reather do
     quote do
       import Reather.Macros, only: [reather: 1, reather: 2, reatherp: 2]
       require Reather.Macros
+      alias Reather.Either
     end
   end
 
@@ -73,60 +75,9 @@ defmodule Reather do
   def new(fun), do: %Reather{reather: fun}
 
   @doc """
-  Convert the value with `ok` or `error` tuple.
-
-  ## Examples
-      iex> Reather.either(:ok)
-      {:ok, nil}
-      iex> Reather.either(:error)
-      {:error, nil}
-      iex> Reather.either({:ok, 3})
-      {:ok, 3}
-      iex> Reather.either({:error, "error!"})
-      {:error, "error!"}
-      iex> Reather.either({:ok, 1, 2})
-      {:ok, {1, 2}}
-      iex> Reather.either({:error, "error", :invalid})
-      {:error, {"error", :invalid}}
-      iex> Reather.either({1, 2})
-      {:ok, {1, 2}}
-      iex> Reather.either({})
-      {:ok, {}}
-      iex> Reather.either(1)
-      {:ok, 1}
-  """
-  def either(v) do
-    case v do
-      :error ->
-        {:error, nil}
-
-      {:error, _} = error ->
-        error
-
-      :ok ->
-        {:ok, nil}
-
-      {:ok, _} = ok ->
-        ok
-
-      value when is_tuple(value) and tuple_size(value) > 0 ->
-        case elem(value, 0) do
-          result when result in [:ok, :error] ->
-            {result, Tuple.delete_at(value, 0)}
-
-          _ ->
-            {:ok, value}
-        end
-
-      value ->
-        {:ok, value}
-    end
-  end
-
-  @doc """
   Create a `Reather` from the value.
   """
-  def of(v), do: Reather.new(fn _ -> either(v) end)
+  def of(v), do: Reather.new(fn _ -> Either.new(v) end)
 
   @doc """
   Create a `Reather` from the value.

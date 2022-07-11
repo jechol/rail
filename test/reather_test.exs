@@ -3,4 +3,5 @@ defmodule ReatherTest do
   use Reather
 
   doctest Reather
+  doctest Reather.Either
 end

@@ -42,7 +42,7 @@ defmodule Reather.Macros do
 
     wrapped_ret =
       quote do
-        Reather.new(fn _ -> Reather.either(unquote(ret)) end)
+        Reather.new(fn _ -> Reather.Either.new(unquote(ret)) end)
       end
 
     body |> List.foldl(wrapped_ret, &parse_expr/2)
