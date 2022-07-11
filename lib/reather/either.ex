@@ -1,6 +1,8 @@
 defmodule Reather.Either do
   @doc """
-  Convert the value with `ok` or `error` tuple.
+  Convert a value into `ok` or `error` tuple. The result is a tuple having
+  an `:ok` or `:error` atom for the first element, and a value for the second
+  element.
 
   ## Examples
       iex> Reather.Either.new(:ok)
@@ -57,6 +59,17 @@ defmodule Reather.Either do
 
   def error(v), do: {:error, v}
 
+  @doc """
+  Map a function to the either.
+  If the either is `ok`, the function is applied to the value.
+  If the either is `error`, it returns as is.
+
+  ## Examples
+      iex> {:ok, 1} |> Either.map(fn x -> x + 1 end)
+      {:ok, 2}
+      iex> {:error, 1} |> Either.map(fn x -> x + 1 end)
+      {:error, 1}
+  """
   def map({:ok, value}, fun) do
     {:ok, fun.(value)}
   end
@@ -65,6 +78,17 @@ defmodule Reather.Either do
     {:error, err}
   end
 
+  @doc """
+  Transform a list of eithers to an either of a list.
+  If any of the eithers is `error`, the result is `error`.
+
+  ## Examples
+      iex> [{:ok, 1}, {:ok, 2}] |> Either.traverse()
+      {:ok, [1, 2]}
+      iex> [{:ok, 1}, {:error, "error!"}, {:ok, 2}]
+      ...> |> Reather.Either.traverse()
+      {:error, "error!"}
+  """
   def traverse(traversable) when is_list(traversable) do
     Enum.reduce_while(traversable, [], fn
       {:ok, v}, acc -> {:cont, [v | acc]}

@@ -35,11 +35,12 @@ defmodule Reather do
   end
 
   @doc """
-  Map the function to the reather.
+  Map a function to the reather.
 
   `map` is lazy, so it's never computed until explicitly call
   `Reather.run/2`.
 
+  ## Examples
       iex> r = reather do
       ...>       x <- {:ok, 1}
       ...>       x
@@ -57,6 +58,25 @@ defmodule Reather do
     end
   end
 
+  @doc """
+  Transform a list of reathers to an reather of a list.
+
+  This operation is lazy, so it's never computed until
+  explicitly call `Reather.run/2`.
+
+  ## Examples
+      iex> r = [{:ok, 1}, {:ok, 2}, {:ok, 3}]
+      ...>     |> Enum.map(&Reather.of/1)
+      ...>     |> Reather.traverse()
+      iex> Reather.run(r)
+      {:ok, [1, 2, 3]}
+
+      iex> r = [{:ok, 1}, {:error, "error"}, {:ok, 3}]
+      ...>     |> Enum.map(&Reather.of/1)
+      ...>     |> Reather.traverse()
+      iex> Reather.run(r)
+      {:error, "error"}
+  """
   def traverse(traversable) when is_list(traversable) do
     Reather.new(fn env ->
       traversable
@@ -93,7 +113,7 @@ defmodule Reather do
   Create a `Reather` from the value.
   If the value is `Reather`, it will be returned as is.
 
-  ## Example
+  ## Examples
       iex> %Reather{} = Reather.wrap(:ok)
 
       iex> r = %Reather{}

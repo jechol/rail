@@ -206,6 +206,56 @@ iex> Target.bar()
 {:error, 1}
 ```
 
+### `Reather.traverse`
+
+Transform a list of reathers to an reather of a list.
+
+This operation is lazy, so it's never computed until
+explicitly call `Reather.run/2`.
+
+```elixir
+iex> r = [{:ok, 1}, {:ok, 2}, {:ok, 3}]
+...>     |> Enum.map(&Reather.of/1) # Make reathers return each elements.
+...>     |> Reather.traverse()
+iex> Reather.run(r)
+{:ok, [1, 2, 3]}
+
+iex> r = [{:ok, 1}, {:error, "error"}, {:ok, 3}]
+...>     |> Enum.map(&Reather.of/1) # Make reathers return each elements.
+...>     |> Reather.traverse()
+iex> Reather.run(r)
+{:error, "error"}
+```
+
+### `Either.new`
+
+Convert a value into `ok` or `error` tuple. The result is a tuple having
+an `:ok` or `:error` atom for the first element, and a value for the second
+element.
+
+### `Either.error`
+
+Make an error tuple from a value.
+
+### `Either.map`
+
+`map` a function to an either tuple.
+The given function will be applied lazily
+when the either is an `ok` tuple.
+
+### `Either.traverse`
+
+Transform a list of eithers to an either of a list.
+If any of the eithers is `error`, the result is `error`.
+
+```elixir
+iex> [{:ok, 1}, {:ok, 2}] |> Either.traverse()
+{:ok, [1, 2]}
+iex> [{:ok, 1}, {:error, "error!"}, {:ok, 2}]
+...> |> Reather.Either.traverse()
+{:error, "error!"}
+```
+
 ## LICENSE
 
 [MIT](./LICENSE)
