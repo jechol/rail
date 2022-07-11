@@ -57,6 +57,16 @@ defmodule Reather do
     end
   end
 
+  def traverse(traversable) when is_list(traversable) do
+    Reather.new(fn env ->
+      traversable
+      |> Enum.map(fn %Reather{} = r ->
+        Reather.run(r, env)
+      end)
+      |> Either.traverse()
+    end)
+  end
+
   @doc """
   Inspect the reather.
 

@@ -54,4 +54,25 @@ defmodule Reather.Either do
         {:ok, value}
     end
   end
+
+  def error(v), do: {:error, v}
+
+  def map({:ok, value}, fun) do
+    {:ok, fun.(value)}
+  end
+
+  def map({:error, err}, _) do
+    {:error, err}
+  end
+
+  def traverse(traversable) when is_list(traversable) do
+    Enum.reduce_while(traversable, [], fn
+      {:ok, v}, acc -> {:cont, [v | acc]}
+      {:error, err}, _acc -> {:halt, {:error, err}}
+    end)
+    |> case do
+      {:error, _} = e -> e
+      vs -> {:ok, Enum.reverse(vs)}
+    end
+  end
 end
