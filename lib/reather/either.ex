@@ -5,27 +5,27 @@ defmodule Reather.Either do
   element.
 
   ## Examples
-      iex> Reather.Either.new(:ok)
+      iex> Either.new(:ok)
       {:ok, nil}
-      iex> Reather.Either.new(:error)
+      iex> Either.new(:error)
       {:error, nil}
-      iex> Reather.Either.new({:ok, 3})
+      iex> Either.new({:ok, 3})
       {:ok, 3}
-      iex> Reather.Either.new({:error, "error!"})
+      iex> Either.new({:error, "error!"})
       {:error, "error!"}
-      iex> Reather.Either.new({:ok, 1, 2})
+      iex> Either.new({:ok, 1, 2})
       {:ok, {1, 2}}
-      iex> Reather.Either.new({:error, "error", :invalid})
+      iex> Either.new({:error, "error", :invalid})
       {:error, {"error", :invalid}}
-      iex> Reather.Either.new({1, 2})
+      iex> Either.new({1, 2})
       {:ok, {1, 2}}
-      iex> Reather.Either.new({})
+      iex> Either.new({})
       {:ok, {}}
-      iex> Reather.Either.new(1)
+      iex> Either.new(1)
       {:ok, 1}
       iex> [1, :error]
       ...> |> Enum.map(fn x ->
-      ...>   Reather.Either.new(x, "error")
+      ...>   Either.new(x, "error")
       ...> end)
       [{:ok, 1}, {:error, "error"}]
   """
@@ -86,7 +86,7 @@ defmodule Reather.Either do
       iex> [{:ok, 1}, {:ok, 2}] |> Either.traverse()
       {:ok, [1, 2]}
       iex> [{:ok, 1}, {:error, "error!"}, {:ok, 2}]
-      ...> |> Reather.Either.traverse()
+      ...> |> Either.traverse()
       {:error, "error!"}
   """
   def traverse(traversable) when is_list(traversable) do

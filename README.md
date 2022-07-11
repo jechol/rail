@@ -252,7 +252,7 @@ If any of the eithers is `error`, the result is `error`.
 iex> [{:ok, 1}, {:ok, 2}] |> Either.traverse()
 {:ok, [1, 2]}
 iex> [{:ok, 1}, {:error, "error!"}, {:ok, 2}]
-...> |> Reather.Either.traverse()
+...> |> Either.traverse()
 {:error, "error!"}
 ```
 
