@@ -169,6 +169,21 @@ defmodule Reather.Either do
   end
 
   @doc """
+  Map a function to the `error` tuple.
+
+  ## Examples
+      iex> {:error, 1} |> Either.map_err(fn x -> x + 1 end)
+      {:error, 2}
+      iex> {:ok, 1} |> Either.map_err(fn x -> x + 1 end)
+      {:ok, 1}
+      iex> :error |> Either.map_err(fn _ -> 1 end)
+      {:error, 1}
+  """
+  def map_err({:ok, v}, _), do: {:ok, v}
+  def map_err({:error, v}, fun), do: {:error, fun.(v)}
+  def map_err(v, map), do: new(v) |> map_err(map)
+
+  @doc """
   Transform a list of eithers to an either of a list.
   If any of the eithers is `error`, the result is `error`.
 
