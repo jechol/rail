@@ -87,9 +87,12 @@ defmodule Reather.Either do
       1
       iex> Either.unwrap({:error, 1})
       ** (RuntimeError) 1
+      iex> Either.unwrap({:ok, 1, 2, 3})
+      {1, 2, 3}
   """
   def unwrap({:ok, v}), do: v
   def unwrap({:error, v}), do: raise(RuntimeError, v |> inspect())
+  def unwrap(v), do: new(v) |> unwrap()
 
   @doc """
   Unwrap a value from an ok tuple.
@@ -102,10 +105,13 @@ defmodule Reather.Either do
       0
       iex> Either.unwrap_or({:error, ""}, fn -> "default" end)
       "default"
+      iex> Either.unwrap_or(:error, "hello")
+      "hello"
   """
   def unwrap_or({:ok, v}, _), do: v
   def unwrap_or({:error, _}, f) when is_function(f), do: f.()
   def unwrap_or({:error, _}, default), do: default
+  def unwrap_or(v, default), do: new(v) |> unwrap_or(default)
 
   @doc """
   Check if the value is an ok tuple.
@@ -113,11 +119,16 @@ defmodule Reather.Either do
   ## Examples
       iex> Either.ok?({:ok, 1})
       true
+      iex> Either.ok?(:ok)
+      true
       iex> Either.ok?({:error, 1})
+      false
+      iex> Either.ok?(:error)
       false
   """
   def ok?({:ok, _}), do: true
   def ok?({:error, _}), do: false
+  def ok?(v), do: new(v) |> ok?()
 
   @doc """
   Map a function to the either.
@@ -129,6 +140,8 @@ defmodule Reather.Either do
       {:ok, 2}
       iex> {:error, 1} |> Either.map(fn x -> x + 1 end)
       {:error, 1}
+      iex> :ok |> Either.map(fn _ -> 1 end)
+      {:ok, 1}
   """
   def map({:ok, value}, fun) do
     {:ok, fun.(value)}
@@ -136,6 +149,10 @@ defmodule Reather.Either do
 
   def map({:error, err}, _) do
     {:error, err}
+  end
+
+  def map(v, fun) do
+    new(v) |> map(fun)
   end
 
   @doc """
@@ -150,7 +167,9 @@ defmodule Reather.Either do
       {:error, "error!"}
   """
   def traverse(traversable) when is_list(traversable) do
-    Enum.reduce_while(traversable, [], fn
+    traversable
+    |> Enum.map(&new(&1))
+    |> Enum.reduce_while([], fn
       {:ok, v}, acc -> {:cont, [v | acc]}
       {:error, err}, _acc -> {:halt, {:error, err}}
     end)
