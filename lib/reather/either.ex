@@ -57,7 +57,47 @@ defmodule Reather.Either do
     end
   end
 
+  @doc """
+  Wrap a value with an ok tuple.
+
+      iex> Either.ok(1)
+      {:ok, 1}
+      iex> Either.ok({:error, 1})
+      {:ok, {:error, 1}}
+  """
+  def ok(v), do: {:ok, v}
+
+  @doc """
+  Wrap a value with an error tuple.
+
+      iex> Either.error(1)
+      {:error, 1}
+      iex> Either.error({:ok, 1})
+      {:error, {:ok, 1}}
+  """
   def error(v), do: {:error, v}
+
+  @doc """
+  Unwrap a value from an ok tuple.
+
+      iex> Either.unwrap({:ok, 1})
+      1
+      iex> Either.unwrap({:error, 1})
+      ** (RuntimeError) 1
+  """
+  def unwrap({:ok, v}), do: v
+  def unwrap({:error, v}), do: raise(RuntimeError, v |> inspect())
+
+  @doc """
+  Check if the value is an ok tuple.
+
+      iex> Either.ok?({:ok, 1})
+      true
+      iex> Either.ok?({:error, 1})
+      false
+  """
+  def ok?({:ok, _}), do: true
+  def ok?({:error, _}), do: false
 
   @doc """
   Map a function to the either.
