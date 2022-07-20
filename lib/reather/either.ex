@@ -60,6 +60,7 @@ defmodule Reather.Either do
   @doc """
   Wrap a value with an ok tuple.
 
+  ## Examples
       iex> Either.ok(1)
       {:ok, 1}
       iex> Either.ok({:error, 1})
@@ -70,6 +71,7 @@ defmodule Reather.Either do
   @doc """
   Wrap a value with an error tuple.
 
+  ## Examples
       iex> Either.error(1)
       {:error, 1}
       iex> Either.error({:ok, 1})
@@ -80,6 +82,7 @@ defmodule Reather.Either do
   @doc """
   Unwrap a value from an ok tuple.
 
+  ## Examples
       iex> Either.unwrap({:ok, 1})
       1
       iex> Either.unwrap({:error, 1})
@@ -89,8 +92,25 @@ defmodule Reather.Either do
   def unwrap({:error, v}), do: raise(RuntimeError, v |> inspect())
 
   @doc """
+  Unwrap a value from an ok tuple.
+  If the value is an error tuple, use passed default value or function.
+
+  ## Examples
+      iex> Either.unwrap_or({:ok, 1}, 0)
+      1
+      iex> Either.unwrap_or({:error, ""}, 0)
+      0
+      iex> Either.unwrap_or({:error, ""}, fn -> "default" end)
+      "default"
+  """
+  def unwrap_or({:ok, v}, _), do: v
+  def unwrap_or({:error, _}, f) when is_function(f), do: f.()
+  def unwrap_or({:error, _}, default), do: default
+
+  @doc """
   Check if the value is an ok tuple.
 
+  ## Examples
       iex> Either.ok?({:ok, 1})
       true
       iex> Either.ok?({:error, 1})
