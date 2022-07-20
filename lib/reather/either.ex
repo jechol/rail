@@ -131,6 +131,19 @@ defmodule Reather.Either do
   def ok?(v), do: new(v) |> ok?()
 
   @doc """
+  Create a either from a boolean.
+
+  ## Examples
+      iex> Either.confirm(true)
+      {:ok, nil}
+      iex> Either.confirm(false, :value_error)
+      {:error, :value_error}
+  """
+  def confirm(boolean, err \\ nil)
+  def confirm(true, _), do: {:ok, nil}
+  def confirm(false, err), do: {:error, err}
+
+  @doc """
   Map a function to the either.
   If the either is `ok`, the function is applied to the value.
   If the either is `error`, it returns as is.
