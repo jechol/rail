@@ -6,6 +6,14 @@ defmodule Reather.Macros do
     built_body = build_body(body)
 
     quote do
+      with {line, doc} when is_bitstring(doc) <- Module.get_attribute(__MODULE__, :doc) do
+        Module.put_attribute(
+          __MODULE__,
+          :doc,
+          Reather.Macros.decorate_doc({line, doc})
+        )
+      end
+
       def unquote(head) do
         unquote(built_body)
       end
@@ -79,5 +87,9 @@ defmodule Reather.Macros do
             unquote(acc)
           end).()
     end
+  end
+
+  def decorate_doc({line, doc}) do
+    {line, "### (Reather)\n\n" <> doc}
   end
 end
