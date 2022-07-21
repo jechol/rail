@@ -89,6 +89,13 @@ defmodule Reather.Macros do
     end
   end
 
+  defp parse_expr(expr, acc) do
+    quote do
+      unquote(expr)
+      unquote(acc)
+    end
+  end
+
   def decorate_doc({line, doc}) do
     {line, "### (Reather)\n\n" <> doc}
   end
