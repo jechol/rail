@@ -1,4 +1,4 @@
-defmodule ReatherTest.ModuleTest do
+defmodule ReatherTest.HelperTest do
   use ExUnit.Case
   use Reather
   import ExUnit.CaptureIO
@@ -21,7 +21,7 @@ defmodule ReatherTest.ModuleTest do
   end
 
   test "Simple reather" do
-    assert Target.foo(1, 2) |> Reather.run() == {:ok, 2}
+    assert {:ok, 2} == Target.foo(1, 2) |> Reather.run()
   end
 
   test "inline reather" do
@@ -33,8 +33,8 @@ defmodule ReatherTest.ModuleTest do
         x + y
       end
 
-    assert fn -> Reather.run(r) end
-           |> with_io() ==
-             {{:ok, 4}, "{:ok, 2}\n"}
+    assert {{:ok, 4}, "{:ok, 2}\n"} ==
+             fn -> Reather.run(r) end
+             |> with_io()
   end
 end
