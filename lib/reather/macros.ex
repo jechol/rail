@@ -2,8 +2,10 @@ defmodule Reather.Macros do
   @doc """
   Declare a reather.
   """
-  defmacro reather(head, do: body) do
-    built_body = build_body(body)
+  defmacro reather(head, body) do
+    do_body = Keyword.get(body, :do)
+    else_body = Keyword.get(body, :else)
+    built_body = build_body(do_body, else_body)
 
     quote do
       with {line, doc} when is_bitstring(doc) <- Module.get_attribute(__MODULE__, :doc) do
@@ -20,15 +22,19 @@ defmodule Reather.Macros do
     end
   end
 
-  defmacro reather(do: body) do
-    build_body(body)
+  defmacro reather(body) do
+    do_body = Keyword.get(body, :do)
+    else_body = Keyword.get(body, :else)
+    build_body(do_body, else_body)
   end
 
   @doc """
   Declare a private reather.
   """
-  defmacro reatherp(head, do: body) do
-    built_body = build_body(body)
+  defmacro reatherp(head, body) do
+    do_body = Keyword.get(body, :do)
+    else_body = Keyword.get(body, :else)
+    built_body = build_body(do_body, else_body)
 
     quote do
       defp unquote(head) do
@@ -37,15 +43,31 @@ defmodule Reather.Macros do
     end
   end
 
-  defp build_body({:__block__, _ctx, exprs}) do
-    parse_exprs(exprs)
+  defp build_body({:__block__, _ctx, exprs}, else_body) do
+    parse_exprs(exprs, else_body)
   end
 
-  defp build_body(expr) do
-    parse_exprs([expr])
+  defp build_body(expr, else_body) do
+    parse_exprs([expr], else_body)
   end
 
-  defp parse_exprs(exprs) do
+  defp build_match(lhs, acc, else_body) do
+    [ok | err] =
+      quote do
+        {:ok, value} ->
+          (fn unquote(lhs) ->
+             unquote(acc)
+           end).(value)
+          |> Reather.run(env)
+
+        {:error, _} = error ->
+          error
+      end
+
+    [ok | (else_body || []) ++ err]
+  end
+
+  defp parse_exprs(exprs, else_body) do
     [ret | body] = exprs |> Enum.reverse()
 
     wrapped_ret =
@@ -53,47 +75,40 @@ defmodule Reather.Macros do
         Reather.new(fn _ -> Reather.Either.new(unquote(ret)) end)
       end
 
-    body |> List.foldl(wrapped_ret, &parse_expr/2)
-  end
+    body
+    |> List.foldl(wrapped_ret, fn
+      {:<-, _ctx, [lhs, rhs]}, acc ->
+        match = build_match(lhs, acc, else_body)
 
-  defp parse_expr({:<-, _ctx, [lhs, rhs]}, acc) do
-    quote do
-      unquote(rhs)
-      |> Reather.wrap()
-      |> (fn %Reather{} = r ->
-            fn env ->
-              r
-              |> Reather.run(env)
-              |> case do
-                {:error, _} = error ->
-                  error
-
-                {:ok, value} ->
-                  (fn unquote(lhs) ->
-                     unquote(acc)
-                   end).(value)
+        quote do
+          unquote(rhs)
+          |> Reather.wrap()
+          |> (fn %Reather{} = r ->
+                fn env ->
+                  r
                   |> Reather.run(env)
-              end
-            end
-            |> Reather.new()
-          end).()
-    end
-  end
+                  |> case do
+                    unquote(match)
+                  end
+                end
+                |> Reather.new()
+              end).()
+        end
 
-  defp parse_expr({:=, _ctx, [lhs, rhs]}, acc) do
-    quote do
-      unquote(rhs)
-      |> (fn unquote(lhs) ->
-            unquote(acc)
-          end).()
-    end
-  end
+      {:=, _ctx, [lhs, rhs]}, acc ->
+        quote do
+          unquote(rhs)
+          |> (fn unquote(lhs) ->
+                unquote(acc)
+              end).()
+        end
 
-  defp parse_expr(expr, acc) do
-    quote do
-      unquote(expr)
-      unquote(acc)
-    end
+      expr, acc ->
+        quote do
+          unquote(expr)
+          unquote(acc)
+        end
+    end)
   end
 
   def decorate_doc({line, doc}) do
