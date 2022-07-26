@@ -1,6 +1,8 @@
 name: test
 on:
   push:
+    branches:
+      - '*'
     paths:
       - .github/workflows/test.yml
       - lib/**
