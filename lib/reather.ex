@@ -119,6 +119,10 @@ defmodule Reather do
   def wrap(%Reather{} = r), do: r
   def wrap(v), do: of(v)
 
+  @doc """
+  Create a new `Reather` from the function.
+  The function will be called after the reather is run.
+  """
   def chain(%Reather{} = rhs, chain_fun) when is_function(chain_fun, 1) do
     Reather.new(fn env ->
       rhs
