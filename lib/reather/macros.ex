@@ -24,7 +24,7 @@ defmodule Reather.Macros do
     build_body(body)
   end
 
-  def build_body(body) do
+  defp build_body(body) do
     # Elixir function body is implicit try.
     # So we need to wrap the body with try to support do, else, rescue, catch and after.
     {[do: do_block], rest} = body |> Keyword.split([:do])
