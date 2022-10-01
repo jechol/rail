@@ -85,21 +85,7 @@ defmodule Reather.Macros do
         quote do
           unquote(rhs)
           |> Reather.wrap()
-          |> (fn %Reather{} = r ->
-                fn env ->
-                  r
-                  |> Reather.run(env)
-                  |> case do
-                    {:ok, unquote(lhs)} ->
-                      unquote(acc)
-                      |> Reather.run(env)
-
-                    {:error, _} = error ->
-                      error
-                  end
-                end
-                |> Reather.new()
-              end).()
+          |> Reather.chain(fn unquote(lhs) -> unquote(acc) end)
         end
 
       expr, acc ->
