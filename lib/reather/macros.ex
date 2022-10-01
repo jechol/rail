@@ -72,15 +72,15 @@ defmodule Reather.Macros do
   end
 
   defp parse_exprs(exprs) do
-    [ret | body] = exprs |> Enum.reverse()
+    {body, ret} = Enum.split(exprs, -1)
 
     wrapped_ret =
       quote do
-        unquote(ret) |> Reather.wrap()
+        unquote(List.first(ret)) |> Reather.wrap()
       end
 
     body
-    |> List.foldl(wrapped_ret, fn
+    |> List.foldr(wrapped_ret, fn
       {:<-, _ctx, [lhs, rhs]}, acc ->
         quote do
           unquote(rhs)
