@@ -71,17 +71,6 @@ defmodule Reather.Macros do
     parse_exprs([expr])
   end
 
-  defp build_match(lhs, acc) do
-    quote do
-      {:ok, unquote(lhs)} ->
-        unquote(acc)
-        |> Reather.run(env)
-
-      {:error, _} = error ->
-        error
-    end
-  end
-
   defp parse_exprs(exprs) do
     [ret | body] = exprs |> Enum.reverse()
 
@@ -93,8 +82,6 @@ defmodule Reather.Macros do
     body
     |> List.foldl(wrapped_ret, fn
       {:<-, _ctx, [lhs, rhs]}, acc ->
-        match = build_match(lhs, acc)
-
         quote do
           unquote(rhs)
           |> Reather.wrap()
@@ -103,7 +90,12 @@ defmodule Reather.Macros do
                   r
                   |> Reather.run(env)
                   |> case do
-                    unquote(match)
+                    {:ok, unquote(lhs)} ->
+                      unquote(acc)
+                      |> Reather.run(env)
+
+                    {:error, _} = error ->
+                      error
                   end
                 end
                 |> Reather.new()
