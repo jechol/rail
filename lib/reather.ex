@@ -30,8 +30,8 @@ defmodule Reather do
   @doc """
   Run the reather.
   """
-  def run(%Reather{reather: fun}, arg \\ %{}) do
-    fun.(arg)
+  def run(%Reather{reather: fun}, env \\ %{}) do
+    fun.(env)
   end
 
   @doc """
