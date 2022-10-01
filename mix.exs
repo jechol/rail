@@ -35,13 +35,14 @@ defmodule Reather.MixProject do
     [
       licenses: ["MIT"],
       links: %{"GitHub" => "https://github.com/SeokminHong/reather-lite"},
-      maintainers: ["Seokmin Hong(ghdtjrald240@gmail.com)"]
+      maintainers: ["Seokmin Hong (ghdtjrald240@gmail.com)"]
     ]
   end
 
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
+      {:dialyxir, "~> 0.4", only: [:dev, :test]},
       {:excoveralls, "~> 0.10", only: :test},
       {:ex_doc, ">= 0.0.0", only: :dev, runtime: false}
     ]

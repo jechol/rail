@@ -31,7 +31,20 @@ jobs:
         with:
           otp-version: ${{matrix.otp}}
           elixir-version: ${{matrix.elixir}}
+          
+      - name: Cache (Dialyzer PLT)
+        uses: actions/cache@v2
+        with:
+          path: |
+            _build/*/*.plt
+            _build/*/*.plt.hash
+          key: plt-${{hashFiles('mix.lock')}}
+          restore-keys: plt-
 
       - run: mix deps.get
       - run: mix format --check-formatted
+      - run: mix dialyzer
+      - run: mix dialyzer
+        env:
+          MIX_ENV: test
       - run: mix coveralls.github
