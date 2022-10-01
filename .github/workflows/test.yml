@@ -42,8 +42,12 @@ jobs:
 
       - run: mix deps.get
       - run: mix format --check-formatted
-      - run: mix dialyzer
-      - run: mix dialyzer
+
+      - name: Dialyzer (dev)
+        run: mix dialyzer
+      - name: Dialyzer (test)
+        run: mix dialyzer
         env:
           MIX_ENV: test
+
       - run: mix coveralls.github
