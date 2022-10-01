@@ -23,13 +23,14 @@ defmodule ReatherTest.ElseTest do
 
     reather foo3(a, b) do
       x <- foo1(a, b)
+      y <- baz(a)
 
-      x + 1
+      x + y
     else
       {:error, "same"} -> {:ok, a}
     end
 
-    reather bar(a, b) do
+    def bar(a, b) do
       if a == b do
         {:error, "same"}
       else
@@ -37,7 +38,7 @@ defmodule ReatherTest.ElseTest do
       end
     end
 
-    reather baz(a) do
+    def baz(a) do
       if a == 0 do
         {:error, "zero"}
       else
@@ -54,7 +55,9 @@ defmodule ReatherTest.ElseTest do
     assert {:ok, 3} == Target.foo2(1, 2) |> Reather.run()
     assert {:ok, 5} == Target.foo2(0, 2) |> Reather.run()
     assert {:error, "same"} == Target.foo2(2, 2) |> Reather.run()
+
     assert {:ok, 2} == Target.foo3(2, 2) |> Reather.run()
+    assert_raise TryClauseError, fn -> Target.foo3(0, 2) |> Reather.run() end
   end
 
   test "inline reather" do
