@@ -42,7 +42,7 @@ defmodule Reather.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:dialyxir, "~> 0.4", only: [:dev, :test]},
+      {:dialyxir, "~> 1.2", only: [:dev, :test]},
       {:excoveralls, "~> 0.10", only: :test},
       {:ex_doc, ">= 0.0.0", only: :dev, runtime: false}
     ]
