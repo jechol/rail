@@ -30,7 +30,6 @@ defmodule ReatherTest.AfterTest do
     assert {{:ok, 3}, "foo\n"} ==
              fn -> Target.foo(1, 2) |> Reather.run() end
              |> with_io()
-             |> IO.inspect()
 
     assert {{:ok, 4}, "foo\n"} ==
              fn ->
