@@ -76,7 +76,7 @@ defmodule Reather.Macros do
 
     wrapped_ret =
       quote do
-        Reather.new(fn _ -> Reather.Either.new(unquote(ret)) end)
+        unquote(ret) |> Reather.wrap()
       end
 
     body

@@ -119,13 +119,13 @@ defmodule Reather do
   def wrap(%Reather{} = r), do: r
   def wrap(v), do: of(v)
 
-  def chain(%Reather{} = rhs, acc) when is_function(acc, 1) do
+  def chain(%Reather{} = rhs, chain_fun) when is_function(chain_fun, 1) do
     Reather.new(fn env ->
       rhs
       |> Reather.run(env)
       |> case do
         {:ok, value} ->
-          acc.(value) |> Reather.run(env)
+          chain_fun.(value) |> Reather.run(env)
 
         {:error, _} = error ->
           error
