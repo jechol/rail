@@ -6,7 +6,7 @@ defmodule Reather.MixProject do
       app: :reather_lite,
       description: "A lighter version of Reather; Combination of Reader and Either monads",
       docs: docs(),
-      version: "0.2.5",
+      version: "0.2.6",
       elixir: "~> 1.13",
       start_permanent: Mix.env() == :prod,
       deps: deps(),

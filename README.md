@@ -17,7 +17,7 @@ lite version without using [Witchcraft](https://witchcrafters.github.io/).
 ```elixir
 def deps do
   [
-    {:reather_lite, "~> 0.2.5"}
+    {:reather_lite, "~> 0.2.6"}
   ]
 end
 ```
