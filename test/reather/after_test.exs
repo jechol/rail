@@ -6,7 +6,7 @@ defmodule ReatherTest.AfterTest do
   defmodule Target do
     use Reather
 
-    reather foo1(a, b) do
+    reather foo(a, b) do
       x <- bar(a, b)
 
       x
@@ -14,7 +14,7 @@ defmodule ReatherTest.AfterTest do
       {:error, "same"} -> {:ok, 2 * a}
       other -> other
     after
-      IO.puts("foo1")
+      IO.puts("foo")
     end
 
     def bar(a, b) do
@@ -27,15 +27,14 @@ defmodule ReatherTest.AfterTest do
   end
 
   test "Simple reather" do
-    assert {{:ok, 3}, "foo1\n"} ==
-             fn -> Target.foo1(1, 2) |> Reather.run() end
-             |> IO.inspect()
+    assert {{:ok, 3}, "foo\n"} ==
+             fn -> Target.foo(1, 2) |> Reather.run() end
              |> with_io()
              |> IO.inspect()
 
-    assert {{:ok, 4}, "foo1\n"} ==
+    assert {{:ok, 4}, "foo\n"} ==
              fn ->
-               Target.foo1(2, 2) |> Reather.run()
+               Target.foo(2, 2) |> Reather.run()
              end
              |> with_io()
   end
