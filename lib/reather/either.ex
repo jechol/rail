@@ -1,4 +1,12 @@
 defmodule Reather.Either do
+  @type ok(t) :: {:ok, t}
+  @type error(t) :: {:error, t}
+  @type either(t) :: ok(t) | error(any)
+
+  @type ok_like :: any
+  @type error_like :: any
+  @type either_like :: ok_like | error_like
+
   @doc """
   Convert a value into `ok` or `error` tuple. The result is a tuple having
   an `:ok` or `:error` atom for the first element, and a value for the second
@@ -29,6 +37,7 @@ defmodule Reather.Either do
       ...> end)
       [{:ok, 1}, {:error, "error"}]
   """
+  @spec new(t1, t2) :: ok(t1) | error(t2) when t1: any, t2: any
   def new(v, err \\ nil) do
     case v do
       :error ->
@@ -66,6 +75,7 @@ defmodule Reather.Either do
       iex> Either.ok({:error, 1})
       {:ok, {:error, 1}}
   """
+  @spec ok(t) :: ok(t) when t: any
   def ok(v), do: {:ok, v}
 
   @doc """
@@ -77,6 +87,7 @@ defmodule Reather.Either do
       iex> Either.error({:ok, 1})
       {:error, {:ok, 1}}
   """
+  @spec error(t) :: error(t) when t: any
   def error(v), do: {:error, v}
 
   @doc """
@@ -90,6 +101,7 @@ defmodule Reather.Either do
       iex> Either.unwrap({:ok, 1, 2, 3})
       {1, 2, 3}
   """
+  @spec unwrap(ok_like) :: any
   def unwrap({:ok, v}), do: v
   def unwrap({:error, v}), do: raise(RuntimeError, v |> inspect())
   def unwrap(v), do: new(v) |> unwrap()
@@ -108,6 +120,7 @@ defmodule Reather.Either do
       iex> Either.unwrap_or(:error, "hello")
       "hello"
   """
+  @spec unwrap_or(either_like, t | (() -> t)) :: t when t: any
   def unwrap_or({:ok, v}, _), do: v
   def unwrap_or({:error, _}, f) when is_function(f), do: f.()
   def unwrap_or({:error, _}, default), do: default
@@ -126,6 +139,7 @@ defmodule Reather.Either do
       iex> Either.ok?(:error)
       false
   """
+  @spec ok?(either_like) :: boolean
   def ok?({:ok, _}), do: true
   def ok?({:error, _}), do: false
   def ok?(v), do: new(v) |> ok?()
@@ -139,6 +153,7 @@ defmodule Reather.Either do
       iex> Either.confirm(false, :value_error)
       {:error, :value_error}
   """
+  @spec confirm(boolean, t) :: either(t) when t: any
   def confirm(boolean, err \\ nil)
   def confirm(true, _), do: {:ok, nil}
   def confirm(false, err), do: {:error, err}
@@ -156,6 +171,7 @@ defmodule Reather.Either do
       iex> :ok |> Either.map(fn _ -> 1 end)
       {:ok, 1}
   """
+  @spec map(either_like, (any -> t)) :: either(t) when t: any
   def map({:ok, value}, fun) do
     {:ok, fun.(value)}
   end
@@ -179,6 +195,7 @@ defmodule Reather.Either do
       iex> :error |> Either.map_err(fn _ -> 1 end)
       {:error, 1}
   """
+  @spec map_err(either_like, (any -> t)) :: either(t) when t: any
   def map_err({:ok, v}, _), do: {:ok, v}
   def map_err({:error, v}, fun), do: {:error, fun.(v)}
   def map_err(v, map), do: new(v) |> map_err(map)
@@ -194,6 +211,7 @@ defmodule Reather.Either do
       ...> |> Either.traverse()
       {:error, "error!"}
   """
+  @spec traverse([either_like]) :: either([any])
   def traverse(traversable) when is_list(traversable) do
     traversable
     |> Enum.map(&new(&1))

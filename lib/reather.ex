@@ -1,6 +1,8 @@
 defmodule Reather do
   defstruct [:reather]
 
+  @type reather :: %Reather{reather: fun()}
+
   require Reather.Macros
   import Reather.Macros
   alias Reather.Either
@@ -25,11 +27,13 @@ defmodule Reather do
   @doc """
   Get the current environment.
   """
+  @spec ask :: reather
   def ask(), do: Reather.new(fn env -> {:ok, env} end)
 
   @doc """
   Run the reather.
   """
+  @spec run(reather, %{}) :: any
   def run(%Reather{reather: fun}, env \\ %{}) do
     fun.(env)
   end
@@ -50,6 +54,7 @@ defmodule Reather do
       ...> |> Reather.run()
       {:ok, 2}
   """
+  @spec map(reather, (any -> any)) :: reather
   def map(r, fun) do
     reather do
       x <- r
@@ -77,6 +82,7 @@ defmodule Reather do
       iex> Reather.run(r)
       {:error, "error"}
   """
+  @spec traverse([reather]) :: reather
   def traverse(traversable) when is_list(traversable) do
     Reather.new(fn env ->
       traversable
@@ -90,6 +96,7 @@ defmodule Reather do
   @doc """
   Inspect the reather result when run.
   """
+  @spec inspect(reather, keyword) :: reather
   def inspect(%Reather{} = r, opts \\ []) do
     Reather.new(fn env ->
       r |> Reather.run(env) |> IO.inspect(opts)
@@ -99,11 +106,13 @@ defmodule Reather do
   @doc """
   Create a new `Reather` from the function.
   """
+  @spec new(fun) :: reather
   def new(fun), do: %Reather{reather: fun}
 
   @doc """
   Create a `Reather` from the value.
   """
+  @spec of(any) :: reather
   def of(v), do: Reather.new(fn _ -> Either.new(v) end)
 
   @doc """
@@ -116,13 +125,15 @@ defmodule Reather do
       iex> r = %Reather{}
       iex> ^r = Reather.wrap(r)
   """
+  @spec wrap(any) :: reather
   def wrap(%Reather{} = r), do: r
   def wrap(v), do: of(v)
 
   @doc """
-  Create a new `Reather` from the function.
+  Create a new `Reather` from a reather and function.
   The function will be called after the reather is run.
   """
+  @spec chain(reather, (any -> reather)) :: reather
   def chain(%Reather{} = rhs, chain_fun) when is_function(chain_fun, 1) do
     Reather.new(fn env ->
       rhs
