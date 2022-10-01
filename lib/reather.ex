@@ -88,10 +88,7 @@ defmodule Reather do
   end
 
   @doc """
-  Inspect the reather.
-
-  **Warning**: It _runs_ the reather. So, the provided
-  reather should not have side effects.
+  Inspect the reather result when run.
   """
   def inspect(%Reather{} = r, opts \\ []) do
     Reather.new(fn env ->

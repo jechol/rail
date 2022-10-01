@@ -12,6 +12,7 @@ defmodule ReatherTest.ElseTest do
       x + y
     else
       {:error, "zero"} -> {:ok, 2 * b}
+      other -> other
     end
 
     reather foo2(a, b) do
@@ -65,6 +66,7 @@ defmodule ReatherTest.ElseTest do
         x + y
       else
         {:error, "zero"} -> {:ok, 2 * b}
+        other -> other
       end
     end
 
