@@ -17,7 +17,7 @@ lite version without using [Witchcraft](https://witchcrafters.github.io/).
 ```elixir
 def deps do
   [
-    {:reather_lite, "~> 0.2.0"}
+    {:reather_lite, "~> 0.2.5"}
   ]
 end
 ```
@@ -124,6 +124,30 @@ iex> r =
 
 iex> r |> Reather.run()
 {:ok, 3}
+```
+
+### `else`, `rescue`, `catch`, `after`
+
+`reather` macro also accepts above clauses.
+
+```elixir
+defmodule Target do
+  use Reather
+
+  reather foo(a, b) do
+    x <- bar(a)
+    y <- baz(b)
+
+    x + y
+  else
+    {:error, _} -> {:ok, a + b}
+    ok -> ok
+  rescue
+    ArithmeticError -> {:error, :div_by_zero}
+  after
+    IO.puts("Target.foo/2")
+  end
+end
 ```
 
 ### `Reather.ask`
