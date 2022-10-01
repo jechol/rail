@@ -46,6 +46,8 @@ jobs:
       - name: Dialyzer (dev)
         run: mix dialyzer
       - name: Dialyzer (test)
-        run: MIX_ENV=test mix dialyzer
+        run: mix dialyzer
+        env:
+          MIX_ENV: test
 
       - run: mix coveralls.github
