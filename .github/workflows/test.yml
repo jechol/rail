@@ -8,6 +8,9 @@ on:
       - lib/**
       - test/**
       - mix.exs
+  pull_request:
+    branches:
+      - '*'
 
 jobs:
   test:
