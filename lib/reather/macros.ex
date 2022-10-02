@@ -24,29 +24,36 @@ defmodule Reather.Macros do
     build_body(body)
   end
 
-  defp build_body(body) do
-    # Elixir function body is implicit try.
-    # So we need to wrap the body with try to support do, else, rescue, catch and after.
-    {[do: do_block], rest} = body |> Keyword.split([:do])
+  defp build_body([{:do, do_block} | rest]) do
     built_do_block = build_do_block(do_block)
+    run_do_block = quote do: unquote(built_do_block) |> Reather.run(env)
 
-    run_do_block =
-      quote do
-        unquote(built_do_block) |> Reather.run(env)
-      end
+    case rest do
+      [] ->
+        # no need to wrap
+        quote do
+          Reather.new(fn env -> unquote(run_do_block) end)
+        end
 
-    # If try doesn't have any one of rescue, catch and after, then compiler warns to use `case` instead.
-    # So, insert empty `after` block to avoid the warning.
-    {after_block, rest} =
-      case rest |> Keyword.split([:after]) do
-        {[after: after_block], rest} -> {after_block, rest}
-        {[], rest} -> {{:__block__, [], []}, rest}
-      end
+      [else: matches] ->
+        # wrap with case
+        quote do
+          Reather.new(fn env ->
+            unquote(run_do_block)
+            |> case do
+              unquote(matches)
+            end
+          end)
+        end
 
-    quote do
-      Reather.new(fn env ->
-        unquote({:try, [], [[do: run_do_block] ++ rest ++ [after: after_block]]})
-      end)
+      rest ->
+        # Elixir function body is implicit try.
+        # So we need to wrap the body with try to support do, else, rescue, catch and after.
+        quote do
+          Reather.new(fn env ->
+            unquote({:try, [], [[do: run_do_block] ++ rest]})
+          end)
+        end
     end
   end
 

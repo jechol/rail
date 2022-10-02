@@ -57,7 +57,7 @@ defmodule ReatherTest.ElseTest do
     assert {:error, "same"} == Target.foo2(2, 2) |> Reather.run()
 
     assert {:ok, 2} == Target.foo3(2, 2) |> Reather.run()
-    assert_raise TryClauseError, fn -> Target.foo3(0, 2) |> Reather.run() end
+    assert_raise CaseClauseError, fn -> Target.foo3(0, 2) |> Reather.run() end
   end
 
   test "inline reather" do

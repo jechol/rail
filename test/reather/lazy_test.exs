@@ -12,10 +12,10 @@ defmodule ReatherTest.LazyTest do
   end
 
   test "inspect doesn't run until call Reather.run" do
-    {%Reather{}, ""} =
-      with_io(fn ->
-        Target.single()
-      end)
+    assert {%Reather{}, ""} =
+             with_io(fn ->
+               Target.single()
+             end)
 
     assert with_io(fn ->
              Target.single() |> Reather.run(%{})
