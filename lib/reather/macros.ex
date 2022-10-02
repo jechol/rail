@@ -39,9 +39,12 @@ defmodule Reather.Macros do
         # wrap with case
         quote do
           Reather.new(fn env ->
-            unquote(run_do_block)
-            |> case do
-              unquote(matches)
+            try do
+              case unquote(run_do_block) do
+                unquote(matches)
+              end
+            rescue
+              e in CaseClauseError -> raise Reather.ClauseError, e.term
             end
           end)
         end
@@ -51,7 +54,11 @@ defmodule Reather.Macros do
         # So we need to wrap the body with try to support do, else, rescue, catch and after.
         quote do
           Reather.new(fn env ->
-            unquote({:try, [], [[do: run_do_block] ++ rest]})
+            try do
+              unquote({:try, [], [[do: run_do_block] ++ rest]})
+            rescue
+              e in TryClauseError -> raise Reather.ClauseError, e.term
+            end
           end)
         end
     end
