@@ -1,4 +1,4 @@
-defmodule ReatherTest.ExceptionTest do
+defmodule ReatherTest.RescueTest do
   use ExUnit.Case
   use Reather
 
