@@ -31,40 +31,24 @@ defmodule Reather.Either do
       {:ok, {}}
       iex> Either.new(1)
       {:ok, 1}
-      iex> [1, :error]
-      ...> |> Enum.map(fn x ->
-      ...>   Either.new(x, "error")
-      ...> end)
-      [{:ok, 1}, {:error, "error"}]
   """
-  @spec new(t1, t2) :: ok(t1) | error(t2) when t1: any, t2: any
-  def new(v, err \\ nil) do
-    case v do
-      :error ->
-        {:error, err}
+  @spec new(any) :: either_like
+  def new(:ok), do: {:ok, nil}
+  def new(:error), do: {:error, nil}
+  def new({:ok, v}), do: {:ok, v}
+  def new({:error, v}), do: {:error, v}
 
-      {:error, _} = error ->
-        error
+  def new(v) when is_tuple(v) and tuple_size(v) > 0 do
+    case elem(v, 0) do
+      result when result in [:ok, :error] ->
+        {result, Tuple.delete_at(v, 0)}
 
-      :ok ->
-        {:ok, nil}
-
-      {:ok, _} = ok ->
-        ok
-
-      value when is_tuple(value) and tuple_size(value) > 0 ->
-        case elem(value, 0) do
-          result when result in [:ok, :error] ->
-            {result, Tuple.delete_at(value, 0)}
-
-          _ ->
-            {:ok, value}
-        end
-
-      value ->
-        {:ok, value}
+      _ ->
+        {:ok, v}
     end
   end
+
+  def new(v), do: {:ok, v}
 
   @doc """
   Wrap a value with an ok tuple.
