@@ -4,19 +4,17 @@ defmodule Rail do
 
     common =
       quote do
-        import Rail.Either, only: [>>>: 2]
-        alias Rail.Either
       end
 
     if override_def do
       quote do
         import Kernel, except: [def: 2, defp: 2]
-        import Rail, only: [def: 2, defp: 2, rail: 1, rail: 2, railp: 2]
+        import Rail, only: [def: 2, defp: 2, rail: 1, rail: 2, railp: 2, >>>: 2]
         unquote(common)
       end
     else
       quote do
-        import Rail, only: [rail: 1, rail: 2, railp: 2]
+        import Rail, only: [rail: 1, rail: 2, railp: 2, >>>: 2]
         unquote(common)
       end
     end
@@ -83,7 +81,7 @@ defmodule Rail do
     |> List.foldr(wrapped_ret, fn
       {:<-, _ctx, [lhs, rhs]}, acc ->
         quote do
-          unquote(rhs) |> Either.chain(fn unquote(lhs) -> unquote(acc) end)
+          unquote(rhs) |> Rail.chain(fn unquote(lhs) -> unquote(acc) end)
         end
 
       expr, acc ->
@@ -93,4 +91,49 @@ defmodule Rail do
         end
     end)
   end
+
+  @doc """
+  Apply a function when value is not {:error, _} or :error
+
+  ## Examples
+
+      iex> 1 |> Rail.chain(fn v -> v + 10 end)
+      11
+      iex> {:ok, 1} |> Rail.chain(fn v -> v + 10 end)
+      11
+      iex> :error |> Rail.chain(fn v -> v + 10 end)
+      {:error, nil}
+      iex> {:error, :noent} |> Rail.chain(fn v -> v + 10 end)
+      {:error, :noent}
+
+  """
+  @spec chain(any, (any -> any)) :: any
+  def chain({:ok, value}, chain_fun) when is_function(chain_fun, 1) do
+    value |> chain_fun.()
+  end
+
+  def chain({:error, _} = error, chain_fun) when is_function(chain_fun, 1) do
+    error
+  end
+
+  def chain(value, chain_fun) when is_function(chain_fun, 1) do
+    value |> Either.new() |> chain(chain_fun)
+  end
+
+  @doc """
+  Alias to `chain/2`.
+
+  ## Examples
+
+      iex> 1 >>> fn v -> v + 10 end
+      11
+      iex> {:ok, 1} >>> fn v -> v + 10 end
+      11
+      iex> :error >>> fn v -> v + 10 end
+      {:error, nil}
+      iex> {:error, :noent} >>> fn v -> v + 10 end
+      {:error, :noent}
+
+  """
+  defdelegate value >>> chain_fun, to: __MODULE__, as: :chain
 end
