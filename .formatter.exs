@@ -1,8 +1,8 @@
 # Used by "mix format"
 locals_without_parens = [
-  reather: 1,
-  reather: 2,
-  reatherp: 2
+  rail: 1,
+  rail: 2,
+  railp: 2
 ]
 
 [

@@ -1,4 +1,4 @@
-defmodule Reather.Either do
+defmodule Rail.Either do
   @type ok(t) :: {:ok, t}
   @type error(t) :: {:error, t}
   @type either(t) :: ok(t) | error(any)
@@ -208,4 +208,49 @@ defmodule Reather.Either do
       vs -> {:ok, Enum.reverse(vs)}
     end
   end
+
+  @doc """
+  Apply a function to the either when it is `ok` compatible value.
+
+  ## Examples
+
+      iex> 1 |> Either.chain(fn v -> v + 10 end)
+      11
+      iex> {:ok, 1} |> Either.chain(fn v -> v + 10 end)
+      11
+      iex> :error |> Either.chain(fn v -> v + 10 end)
+      {:error, nil}
+      iex> {:error, :noent} |> Either.chain(fn v -> v + 10 end)
+      {:error, :noent}
+
+  """
+  @spec chain(any, (any -> either(any))) :: either(any)
+  def chain({:ok, value}, chain_fun) when is_function(chain_fun, 1) do
+    value |> chain_fun.()
+  end
+
+  def chain({:error, _} = error, chain_fun) when is_function(chain_fun, 1) do
+    error
+  end
+
+  def chain(value, chain_fun) when is_function(chain_fun, 1) do
+    value |> new() |> chain(chain_fun)
+  end
+
+  @doc """
+  Alias to `chain/2`.
+
+  ## Examples
+
+      iex> 1 >>> fn v -> v + 10 end
+      11
+      iex> {:ok, 1} >>> fn v -> v + 10 end
+      11
+      iex> :error >>> fn v -> v + 10 end
+      {:error, nil}
+      iex> {:error, :noent} >>> fn v -> v + 10 end
+      {:error, :noent}
+
+  """
+  defdelegate value >>> chain_fun, to: __MODULE__, as: :chain
 end

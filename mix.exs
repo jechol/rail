@@ -1,17 +1,17 @@
-defmodule Reather.MixProject do
+defmodule Rail.MixProject do
   use Mix.Project
 
   def project do
     [
-      app: :reather_lite,
-      description: "A lighter version of Reather; Combination of Reader and Either monads",
+      app: :rail,
+      description: "A lighter version of Rail; Combination of Reader and Either monads",
       docs: docs(),
-      version: "0.2.7",
+      version: "1.0.0",
       elixir: "~> 1.13",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
       package: package(),
-      source_url: "https://github.com/SeokminHong/reather-lite",
+      source_url: "https://github.com/jechol/rail",
       test_coverage: [tool: ExCoveralls],
       preferred_cli_env: [
         coveralls: :test,
@@ -34,8 +34,8 @@ defmodule Reather.MixProject do
   defp package do
     [
       licenses: ["MIT"],
-      links: %{"GitHub" => "https://github.com/SeokminHong/reather-lite"},
-      maintainers: ["Seokmin Hong (ghdtjrald240@gmail.com)"]
+      links: %{"GitHub" => "https://github.com/jechol/rail"},
+      maintainers: ["Jechol Lee (mr.jechol@gmail.com)"]
     ]
   end
 
@@ -51,9 +51,9 @@ defmodule Reather.MixProject do
   defp docs() do
     [
       main: "readme",
-      name: "reather-lite",
-      canonical: "http://hexdocs.pm/reather_lite",
-      source_url: "https://github.com/SeokminHong/reather-lite",
+      name: "rail",
+      canonical: "http://hexdocs.pm/rail",
+      source_url: "https://github.com/jechol/rail",
       extras: [
         "README.md",
         "LICENSE"
