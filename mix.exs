@@ -4,9 +4,9 @@ defmodule Rail.MixProject do
   def project do
     [
       app: :rail,
-      description: "A lighter version of Rail; Combination of Reader and Either monads",
+      description: "Railway oriented programming for Elixir",
       docs: docs(),
-      version: "0.1.0",
+      version: "0.1.1",
       elixir: "~> 1.13",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
