@@ -6,7 +6,7 @@ defmodule Rail.MixProject do
       app: :rail,
       description: "A lighter version of Rail; Combination of Reader and Either monads",
       docs: docs(),
-      version: "1.0.0",
+      version: "1.0.1",
       elixir: "~> 1.13",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
