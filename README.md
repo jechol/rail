@@ -18,7 +18,7 @@ This library is mostly copied from [SeokminHong/reather-lite](https://github.com
 ```elixir
 def deps do
   [
-    {:rail, "~> 0.1"}
+    {:rail, "~> 0.2.0"}
   ]
 end
 ```
@@ -69,35 +69,6 @@ iex> rail do
 ...    x + y
 ...  end
 3
-```
-
-### `Either.new`
-
-Convert a value into `ok` or `error` tuple. The result is a tuple having
-an `:ok` or `:error` atom for the first element, and a value for the second
-element.
-
-### `Either.error`
-
-Make an error tuple from a value.
-
-### `Either.map`
-
-`map` a function to an either tuple.
-The given function will be applied lazily
-when the either is an `ok` tuple.
-
-### `Either.traverse`
-
-Transform a list of eithers to an either of a list.
-If any of the eithers is `error`, the result is `error`.
-
-```elixir
-iex> [{:ok, 1}, {:ok, 2}] |> Either.traverse()
-{:ok, [1, 2]}
-iex> [{:ok, 1}, {:error, "error!"}, {:ok, 2}]
-...> |> Either.traverse()
-{:error, "error!"}
 ```
 
 ## LICENSE
