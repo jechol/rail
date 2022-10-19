@@ -61,4 +61,33 @@ defmodule RailTest do
 
     assert 3 == result
   end
+
+  defmodule Calc3 do
+    use Rail
+
+    def div(num, denom) do
+      denom >>> (&check_denom/1) >>> (&Kernel./(num, &1))
+    end
+
+    # def div_like_pipe(num, denom) do
+    #   denom >>> check_denom() >>> (&Kernel./(num, &1)).()
+    # end
+
+    def check_denom(0) do
+      {:error, :div_by_zero}
+    end
+
+    def check_denom(n) do
+      # same with {:ok, n}
+      n
+    end
+  end
+
+  test ">>>/2" do
+    assert 5.0 == Calc3.div(10, 2)
+    assert {:error, :div_by_zero} == Calc3.div(10, 0)
+
+    # assert 5.0 == Calc3.div_like_pipe(10, 2)
+    # assert {:error, :div_by_zero} == Calc3.div_like_pipe(10, 0)
+  end
 end

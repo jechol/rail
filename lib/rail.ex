@@ -20,8 +20,6 @@ defmodule Rail do
     end
   end
 
-  alias Rail.Either
-
   defmacro rail(head, body) do
     expanded_body = expand_body(body)
 
@@ -116,12 +114,12 @@ defmodule Rail do
     error
   end
 
-  def chain({:ok, value}, chain_fun) when is_function(chain_fun, 1) do
-    value |> chain_fun.()
+  def chain({:ok, value}, fun) when is_function(fun, 1) do
+    value |> fun.()
   end
 
-  def chain(value, chain_fun) when is_function(chain_fun, 1) do
-    value |> chain_fun.()
+  def chain(value, fun) when is_function(fun, 1) do
+    value |> fun.()
   end
 
   @doc """
@@ -129,15 +127,46 @@ defmodule Rail do
 
   ## Examples
 
+      iex> 1 >>> fn v -> Integer.to_string(v) end
+      "1"
       iex> {:ok, 1} >>> fn v -> Integer.to_string(v) end
       "1"
-      iex> {:ok, 1} >>> Integer.to_string()
-      "1"
-      iex> :error >>> Integer.to_string()
-      :error
-      iex> {:error, :div_by_zero} >>> Integer.to_string()
-      {:error, :div_by_zero}
+      # iex> {:ok, 1} >>> Integer.to_string()
+      # "1"
+      # iex> :error >>> Integer.to_string()
+      # :error
+      # iex> {:error, :div_by_zero} >>> Integer.to_string()
+      # {:error, :div_by_zero}
 
   """
-  defdelegate value >>> chain_fun, to: __MODULE__, as: :chain
+
+  # defmacro value >>> (call = {{:., _, [mod, fun]}, _ctx, args})
+  #          when is_atom(mod) and is_atom(fun) and is_list(args) do
+  #   handle_pipe(value, call)
+  # end
+
+  # defmacro value >>> (call = {fun, _ctx, args}) when is_atom(fun) and is_list(args) do
+  #   handle_pipe(value, call)
+  # end
+
+  # defp handle_pipe(value, {fun, ctx, args}) do
+  #   # called like pipe style. ex. 1 >>> Integer.to_string()
+
+  #   v = Macro.var(:v, __MODULE__)
+
+  #   q =
+  #     quote do
+  #       unquote(value) |> Rail.chain(fn unquote(v) -> unquote({fun, ctx, [v | args]}) end)
+  #     end
+
+  #   # q |> Macro.to_string() |> IO.puts()
+
+  #   q
+  # end
+
+  defmacro value >>> fun do
+    quote do
+      unquote(value) |> Rail.chain(unquote(fun))
+    end
+  end
 end
