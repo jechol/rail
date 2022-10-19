@@ -1,10 +1,8 @@
 defmodule Rail do
-  import Kernel, except: [|>: 2]
-
   defmacro __using__(opts) do
     overrides =
       if Keyword.get(opts, :override_kernel, true) do
-        [def: 2, defp: 2, |>: 2]
+        [def: 2, defp: 2]
       else
         []
       end
@@ -185,12 +183,6 @@ defmodule Rail do
       Rail.chain(unquote(value), fn unquote(v) ->
         unquote({fun, ctx, [v | args]})
       end)
-    end
-  end
-
-  defmacro value |> fun do
-    quote do
-      unquote(value) >>> unquote(fun)
     end
   end
 end

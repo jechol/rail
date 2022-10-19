@@ -89,9 +89,4 @@ defmodule RailTest do
                {:error, :nan} >>> Kernel.*(100) >>> Integer.to_string()
     end
   end
-
-  test "|>/2" do
-    assert "1" == {:ok, 1} |> fn v -> Integer.to_string(v) end
-    assert "1" == {:ok, 1} |> Integer.to_string()
-  end
 end
