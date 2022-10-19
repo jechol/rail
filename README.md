@@ -7,7 +7,7 @@
 
 `Rail` is a helper macros for "Railway oriented programming".
 
-It helps you handle error cases at almost no cost with `rail` macro.
+It helps you handle error cases at almost no cost with `rail`, `>>>`, and `def` macro.
 
 If you are not comfortable with "Railway oriented programming", see [Railway oriented programming](https://www.youtube.com/watch?v=fYo3LN9Vf_M)
 
@@ -69,6 +69,20 @@ iex> rail do
 ...    x + y
 ...  end
 3
+```
+
+`left >>> right` is similar to `|>`, but
+
+- applies right function only when left is `value` or `{:ok, value}`.
+- support both function and call expression, which makes it compatible with `|>`.
+
+```elixir
+iex> 1 >>> fn v -> Integer.to_string(v) end
+"1"
+iex> {:ok, 1} >>> Integer.to_string()
+"1"
+iex> {:error, :div_by_zero} >>> Integer.to_string()
+{:error, :div_by_zero}
 ```
 
 ## LICENSE
