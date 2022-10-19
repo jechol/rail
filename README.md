@@ -79,6 +79,8 @@ iex> rail do
 ```elixir
 iex> 1 >>> fn v -> Integer.to_string(v) end
 "1"
+iex> {:ok, 1} >>> fn v -> Integer.to_string(v) end
+"1"
 iex> {:ok, 1} >>> Integer.to_string()
 "1"
 iex> {:error, :div_by_zero} >>> Integer.to_string()
