@@ -18,7 +18,7 @@ This library is mostly copied from [SeokminHong/reather-lite](https://github.com
 ```elixir
 def deps do
   [
-    {:rail, "~> 0.2.0"}
+    {:rail, "~> 0.2.1"}
   ]
 end
 ```
