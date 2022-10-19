@@ -62,32 +62,27 @@ defmodule RailTest do
     assert 3 == result
   end
 
-  defmodule Calc3 do
-    use Rail
+  describe ">>>/2" do
+    test "function" do
+      assert "1" == {:ok, 1} >>> fn v -> Integer.to_string(v) end
+      assert "1" == {:ok, 1} >>> (&Integer.to_string/1)
 
-    def div(num, denom) do
-      denom >>> (&check_denom/1) >>> (&Kernel./(num, &1))
+      assert "100" ==
+               {:ok, 1} >>> fn v -> v * 100 end >>> Integer.to_string()
+
+      assert {:error, :nan} ==
+               {:error, :nan} >>> fn v -> v * 100 end >>> Integer.to_string()
     end
 
-    # def div_like_pipe(num, denom) do
-    #   denom >>> check_denom() >>> (&Kernel./(num, &1)).()
-    # end
+    test "call" do
+      assert "1" == {:ok, 1} >>> Integer.to_string()
+      assert "1" == {:ok, 1} >>> (&Integer.to_string/1).()
 
-    def check_denom(0) do
-      {:error, :div_by_zero}
+      assert "100" ==
+               {:ok, 1} >>> Kernel.*(100) >>> Integer.to_string()
+
+      assert {:error, :nan} ==
+               {:error, :nan} >>> Kernel.*(100) >>> Integer.to_string()
     end
-
-    def check_denom(n) do
-      # same with {:ok, n}
-      n
-    end
-  end
-
-  test ">>>/2" do
-    assert 5.0 == Calc3.div(10, 2)
-    assert {:error, :div_by_zero} == Calc3.div(10, 0)
-
-    # assert 5.0 == Calc3.div_like_pipe(10, 2)
-    # assert {:error, :div_by_zero} == Calc3.div_like_pipe(10, 0)
   end
 end

@@ -131,38 +131,25 @@ defmodule Rail do
       "1"
       iex> {:ok, 1} >>> fn v -> Integer.to_string(v) end
       "1"
-      # iex> {:ok, 1} >>> Integer.to_string()
-      # "1"
-      # iex> :error >>> Integer.to_string()
-      # :error
-      # iex> {:error, :div_by_zero} >>> Integer.to_string()
-      # {:error, :div_by_zero}
+      iex> {:ok, 1} >>> Integer.to_string()
+      "1"
+      iex> :error >>> Integer.to_string()
+      :error
+      iex> {:error, :div_by_zero} >>> Integer.to_string()
+      {:error, :div_by_zero}
 
   """
 
-  # defmacro value >>> (call = {{:., _, [mod, fun]}, _ctx, args})
-  #          when is_atom(mod) and is_atom(fun) and is_list(args) do
-  #   handle_pipe(value, call)
-  # end
+  defmacro value >>> {{:., _, _} = fun, ctx, args} do
+    # called like pipe style.
+    # ex. {:ok, 1} >>> Integer.to_string()
 
-  # defmacro value >>> (call = {fun, _ctx, args}) when is_atom(fun) and is_list(args) do
-  #   handle_pipe(value, call)
-  # end
+    v = Macro.var(:v, __MODULE__)
 
-  # defp handle_pipe(value, {fun, ctx, args}) do
-  #   # called like pipe style. ex. 1 >>> Integer.to_string()
-
-  #   v = Macro.var(:v, __MODULE__)
-
-  #   q =
-  #     quote do
-  #       unquote(value) |> Rail.chain(fn unquote(v) -> unquote({fun, ctx, [v | args]}) end)
-  #     end
-
-  #   # q |> Macro.to_string() |> IO.puts()
-
-  #   q
-  # end
+    quote do
+      unquote(value) |> Rail.chain(fn unquote(v) -> unquote({fun, ctx, [v | args]}) end)
+    end
+  end
 
   defmacro value >>> fun do
     quote do
