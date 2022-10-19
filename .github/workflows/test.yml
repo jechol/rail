@@ -2,15 +2,10 @@ name: test
 on:
   push:
     branches:
-      - '*'
-    paths:
-      - .github/workflows/test.yml
-      - lib/**
-      - test/**
-      - mix.exs
+      - "**"
   pull_request:
     branches:
-      - '*'
+      - "**"
 
 jobs:
   test:
@@ -31,7 +26,7 @@ jobs:
         with:
           otp-version: ${{matrix.otp}}
           elixir-version: ${{matrix.elixir}}
-          
+
       - name: Cache (Dialyzer PLT)
         uses: actions/cache@v2
         with:
