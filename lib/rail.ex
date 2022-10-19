@@ -1,22 +1,17 @@
 defmodule Rail do
+  import Kernel, except: [|>: 2]
+
   defmacro __using__(opts) do
-    override_def = Keyword.get(opts, :override_def, true)
-
-    common =
-      quote do
+    overrides =
+      if Keyword.get(opts, :override_kernel, true) do
+        [def: 2, defp: 2, |>: 2]
+      else
+        []
       end
 
-    if override_def do
-      quote do
-        import Kernel, except: [def: 2, defp: 2]
-        import Rail, only: [def: 2, defp: 2, rail: 1, rail: 2, railp: 2, >>>: 2]
-        unquote(common)
-      end
-    else
-      quote do
-        import Rail, only: [rail: 1, rail: 2, railp: 2, >>>: 2]
-        unquote(common)
-      end
+    quote do
+      import Kernel, except: unquote(overrides)
+      import Rail, only: unquote([rail: 1, rail: 2, railp: 2, >>>: 2] ++ overrides)
     end
   end
 
@@ -75,8 +70,7 @@ defmodule Rail do
         unquote(List.first(ret))
       end
 
-    body
-    |> List.foldr(wrapped_ret, fn
+    List.foldr(body, wrapped_ret, fn
       {:<-, _ctx, [lhs, rhs]}, acc ->
         quote do
           unquote(rhs) |> Rail.chain(fn unquote(lhs) -> unquote(acc) end)
@@ -115,11 +109,11 @@ defmodule Rail do
   end
 
   def chain({:ok, value}, fun) when is_function(fun, 1) do
-    value |> fun.()
+    fun.(value)
   end
 
   def chain(value, fun) when is_function(fun, 1) do
-    value |> fun.()
+    fun.(value)
   end
 
   @doc """
@@ -147,13 +141,19 @@ defmodule Rail do
     v = Macro.var(:v, __MODULE__)
 
     quote do
-      unquote(value) |> Rail.chain(fn unquote(v) -> unquote({fun, ctx, [v | args]}) end)
+      Rail.chain(unquote(value), fn unquote(v) -> unquote({fun, ctx, [v | args]}) end)
     end
   end
 
   defmacro value >>> fun do
     quote do
-      unquote(value) |> Rail.chain(unquote(fun))
+      Rail.chain(unquote(value), unquote(fun))
+    end
+  end
+
+  defmacro value |> fun do
+    quote do
+      unquote(value) >>> unquote(fun)
     end
   end
 end

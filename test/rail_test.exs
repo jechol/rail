@@ -85,4 +85,28 @@ defmodule RailTest do
                {:error, :nan} >>> Kernel.*(100) >>> Integer.to_string()
     end
   end
+
+  describe "|>/2" do
+    test "function" do
+      assert "1" == {:ok, 1} |> fn v -> Integer.to_string(v) end
+      assert "1" == {:ok, 1} |> (&Integer.to_string/1)
+
+      assert "100" ==
+               {:ok, 1} |> fn v -> v * 100 end |> Integer.to_string()
+
+      assert {:error, :nan} ==
+               {:error, :nan} |> fn v -> v * 100 end |> Integer.to_string()
+    end
+
+    test "call" do
+      assert "1" == {:ok, 1} |> Integer.to_string()
+      assert "1" == {:ok, 1} |> (&Integer.to_string/1).()
+
+      assert "100" ==
+               {:ok, 1} |> Kernel.*(100) |> Integer.to_string()
+
+      assert {:error, :nan} ==
+               {:error, :nan} |> Kernel.*(100) |> Integer.to_string()
+    end
+  end
 end
