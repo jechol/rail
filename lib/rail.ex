@@ -102,37 +102,41 @@ defmodule Rail do
       iex> {:ok, 1} |> Rail.chain(fn v -> v + 10 end)
       11
       iex> :error |> Rail.chain(fn v -> v + 10 end)
-      {:error, nil}
+      :error
       iex> {:error, :noent} |> Rail.chain(fn v -> v + 10 end)
       {:error, :noent}
 
   """
   @spec chain(any, (any -> any)) :: any
+  def chain({:error, _} = error, _) do
+    error
+  end
+
+  def chain(:error = error, _) do
+    error
+  end
+
   def chain({:ok, value}, chain_fun) when is_function(chain_fun, 1) do
     value |> chain_fun.()
   end
 
-  def chain({:error, _} = error, chain_fun) when is_function(chain_fun, 1) do
-    error
-  end
-
   def chain(value, chain_fun) when is_function(chain_fun, 1) do
-    value |> Either.new() |> chain(chain_fun)
+    value |> chain_fun.()
   end
 
   @doc """
-  Alias to `chain/2`.
+  Apply a function or pipe to a function call when value is not {:error, _} or :error
 
   ## Examples
 
-      iex> 1 >>> fn v -> v + 10 end
-      11
-      iex> {:ok, 1} >>> fn v -> v + 10 end
-      11
-      iex> :error >>> fn v -> v + 10 end
-      {:error, nil}
-      iex> {:error, :noent} >>> fn v -> v + 10 end
-      {:error, :noent}
+      iex> {:ok, 1} >>> fn v -> Integer.to_string(v) end
+      "1"
+      iex> {:ok, 1} >>> Integer.to_string()
+      "1"
+      iex> :error >>> Integer.to_string()
+      :error
+      iex> {:error, :div_by_zero} >>> Integer.to_string()
+      {:error, :div_by_zero}
 
   """
   defdelegate value >>> chain_fun, to: __MODULE__, as: :chain
