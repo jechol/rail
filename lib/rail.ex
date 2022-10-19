@@ -73,7 +73,7 @@ defmodule Rail do
     List.foldr(body, wrapped_ret, fn
       {:<-, _ctx, [lhs, rhs]}, acc ->
         quote do
-          unquote(rhs) |> Rail.chain(fn unquote(lhs) -> unquote(acc) end)
+          Rail.chain(unquote(rhs), fn unquote(lhs) -> unquote(acc) end)
         end
 
       expr, acc ->
@@ -134,20 +134,47 @@ defmodule Rail do
 
   """
 
+  defmacro value >>> ({:fn, _, _} = fun) do
+    # anonymous function
+    handle_function(value, fun)
+  end
+
+  defmacro value >>> ({:&, _, _} = fun) do
+    # captured function
+    handle_function(value, fun)
+  end
+
   defmacro value >>> {{:., _, _} = fun, ctx, args} do
+    # pipe style remote call
+    handle_call(value, {fun, ctx, args})
+  end
+
+  defmacro value >>> {fun, ctx, args} when is_atom(fun) do
+    # pipe style local or imported call
+    handle_call(value, {fun, ctx, args})
+  end
+
+  defmacro value >>> fun do
+    # other
+    handle_function(value, fun)
+  end
+
+  defp handle_function(value, fun) do
+    quote do
+      Rail.chain(unquote(value), unquote(fun))
+    end
+  end
+
+  defp handle_call(value, {fun, ctx, args}) do
     # called like pipe style.
     # ex. {:ok, 1} >>> Integer.to_string()
 
     v = Macro.var(:v, __MODULE__)
 
     quote do
-      Rail.chain(unquote(value), fn unquote(v) -> unquote({fun, ctx, [v | args]}) end)
-    end
-  end
-
-  defmacro value >>> fun do
-    quote do
-      Rail.chain(unquote(value), unquote(fun))
+      Rail.chain(unquote(value), fn unquote(v) ->
+        unquote({fun, ctx, [v | args]})
+      end)
     end
   end
 
