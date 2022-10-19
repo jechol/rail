@@ -78,7 +78,9 @@ defmodule RailTest do
     test "call" do
       assert "1" == {:ok, 1} >>> (fn v -> Integer.to_string(v) end).()
       assert "1" == {:ok, 1} >>> (&Integer.to_string/1).()
+      assert "1" == {:ok, 1} >>> Kernel.to_string()
       assert "1" == {:ok, 1} >>> to_string()
+      assert "1" == {:ok, 1} >>> to_string
 
       assert "100" ==
                {:ok, 1} >>> Kernel.*(100) >>> Integer.to_string()

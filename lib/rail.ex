@@ -151,6 +151,16 @@ defmodule Rail do
 
   defmacro value >>> {fun, ctx, args} when is_atom(fun) do
     # pipe style local or imported call
+
+    args =
+      if args in [nil, Elixir] do
+        # called without parens
+        # ex: 1 >>> to_string
+        []
+      else
+        args
+      end
+
     handle_call(value, {fun, ctx, args})
   end
 
