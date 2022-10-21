@@ -217,4 +217,29 @@ defmodule Rail do
   """
   def map_error({:error, value}, fun) when is_function(fun, 1), do: {:error, fun.(value)}
   def map_error(other, _), do: other
+
+  @doc """
+  Normalize input to {:ok, value} or {:error, error}
+
+  ## Examples
+
+      iex> :error |> Rail.normalize()
+      {:error, nil}
+      iex> {:error, 1, 2} |> Rail.normalize()
+      {:error, {1, 2}}
+      iex> :ok |> Rail.normalize()
+      {:ok, nil}
+      iex> {:ok, 1, 2} |> Rail.normalize()
+      {:ok, {1, 2}}
+      iex> {:hello, :world} |> Rail.normalize()
+      {:ok, {:hello, :world}}
+
+  """
+
+  def normalize(tag) when tag in [:ok, :error], do: {tag, nil}
+  def normalize({tag, v1}) when tag in [:ok, :error], do: {tag, v1}
+  def normalize({tag, v1, v2}) when tag in [:ok, :error], do: {tag, {v1, v2}}
+  def normalize({tag, v1, v2, v3}) when tag in [:ok, :error], do: {tag, {v1, v2, v3}}
+  def normalize({tag, v1, v2, v3, v4}) when tag in [:ok, :error], do: {tag, {v1, v2, v3, v4}}
+  def normalize(untagged), do: {:ok, untagged}
 end
