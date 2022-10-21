@@ -9,7 +9,9 @@ defmodule Rail do
 
     quote do
       import Kernel, except: unquote(overrides)
-      import Rail, only: unquote([rail: 1, rail: 2, railp: 2, >>>: 2] ++ overrides)
+
+      import Rail,
+        only: unquote([rail: 1, rail: 2, railp: 2, >>>: 2, map_ok: 2, map_error: 2] ++ overrides)
     end
   end
 
@@ -185,4 +187,34 @@ defmodule Rail do
       end)
     end
   end
+
+  @doc """
+  Apply a function for value of {:ok, value}, otherwise bypass
+
+  ## Examples
+
+      iex> :ok |> Rail.map_ok(fn 1 -> 10 end)
+      :ok
+      iex> {:ok, 1} |> Rail.map_ok(fn 1 -> 10 end)
+      {:ok, 10}
+      iex> {:error, 1} |> Rail.map_ok(fn 1 -> 10 end)
+      {:error, 1}
+
+  """
+  def map_ok({:ok, value}, fun) when is_function(fun, 1), do: {:ok, fun.(value)}
+  def map_ok(other, _), do: other
+
+  @doc """
+  Apply a function for error of {:error, error}, otherwise bypass
+
+  ## Examples
+
+      iex> :error |> Rail.map_error(fn :noent -> :not_found end)
+      :error
+      iex> {:error, :noent} |> Rail.map_error(fn :noent -> :not_found end)
+      {:error, :not_found}
+
+  """
+  def map_error({:error, value}, fun) when is_function(fun, 1), do: {:error, fun.(value)}
+  def map_error(other, _), do: other
 end

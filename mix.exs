@@ -6,7 +6,7 @@ defmodule Rail.MixProject do
       app: :rail,
       description: "Railway oriented programming for Elixir",
       docs: docs(),
-      version: "0.6.0",
+      version: "0.7.0",
       elixir: "~> 1.13",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
