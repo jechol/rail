@@ -109,21 +109,21 @@ defmodule Rail do
 
   @doc """
 
-  Introduces new syntax left <- right,
+  Introduces new syntax `left <- right`,
 
-  * which bind value to left when right is {:ok, value} or value
-  * or skips entire code block when right is {:error, err} or :error.
+  - which bind `value` to left when `right` is `{:ok, value}` or just `value`
+  - or skips entire code block when `right` is `{:error, _}` or `:error`.
 
 
   ## Examples
 
-    iex> rail do
-    ...>   x <- {:ok, 1}
-    ...>   y <- {:ok, 2}
-    ...>
-    ...>   x + y
-    ...> end
-    3
+      iex> rail do
+      ...>   x <- {:ok, 1}
+      ...>   y <- {:ok, 2}
+      ...>
+      ...>   x + y
+      ...> end
+      3
 
   """
   defmacro rail([do: _] = body) do

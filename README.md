@@ -30,7 +30,7 @@ end
 `use Rail` introduces new syntax `left <- right`,
 
 - which bind `value` to left when right is `{:ok, value}` or `value`
-- or skips entire code block when right is `{:error, err}` or `:error`.
+- or skips entire code block when right is `{:error, _}` or `:error`.
 
 ```elixir
 
@@ -86,6 +86,8 @@ iex> {:ok, 1} >>> Integer.to_string()
 iex> {:error, :div_by_zero} >>> Integer.to_string()
 {:error, :div_by_zero}
 ```
+
+For more examples, see `Rail`
 
 ## LICENSE
 
