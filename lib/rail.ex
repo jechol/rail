@@ -15,6 +15,22 @@ defmodule Rail do
     end
   end
 
+  @doc """
+  Similar to `Kernel.def/2`, but the function body is wrapped in a `rail/1` block.
+
+  ```elixir
+  defmodule Target do
+    use Rail
+
+    rail sum() do
+      x <- {:ok, 1}
+      y <- {:ok, 1}
+
+      {:ok, x + y}
+    end
+  end
+  ```
+  """
   defmacro rail(head, body) do
     expanded_body = expand_body(body)
 
@@ -23,12 +39,44 @@ defmodule Rail do
     end
   end
 
+  @doc """
+  Similar to `Kernel.def/2`, but the function body is wrapped in a `rail/1` block.
+
+  ```elixir
+  defmodule Target do
+    use Rail
+
+    def sum() do
+      x <- {:ok, 1}
+      y <- {:ok, 1}
+
+      {:ok, x + y}
+    end
+  end
+  ```
+  """
   defmacro def(head, body) do
     quote do
       rail unquote(head), unquote(body)
     end
   end
 
+  @doc """
+  Similar to `Kernel.defp/2`, but the function body is wrapped in a `rail/1` block.
+
+  ```elixir
+  defmodule Target do
+    use Rail
+
+    rail sum() do
+      x <- {:ok, 1}
+      y <- {:ok, 1}
+
+      {:ok, x + y}
+    end
+  end
+  ```
+  """
   defmacro railp(head, body) do
     expanded_body = expand_body(body)
 
@@ -37,12 +85,47 @@ defmodule Rail do
     end
   end
 
+  @doc """
+  Similar to `Kernel.defp/2`, but the function body is wrapped in a `rail/1` block.
+
+  ```elixir
+  defmodule Target do
+    use Rail
+
+    defp sum() do
+      x <- {:ok, 1}
+      y <- {:ok, 1}
+
+      {:ok, x + y}
+    end
+  end
+  ```
+  """
   defmacro defp(head, body) do
     quote do
       railp unquote(head), unquote(body)
     end
   end
 
+  @doc """
+
+  Introduces new syntax left <- right,
+
+  * which bind value to left when right is {:ok, value} or value
+  * or skips entire code block when right is {:error, err} or :error.
+
+
+  ## Examples
+
+    iex> rail do
+    ...>   x <- {:ok, 1}
+    ...>   y <- {:ok, 2}
+    ...>
+    ...>   x + y
+    ...> end
+    3
+
+  """
   defmacro rail([do: _] = body) do
     [do: result] = expand_body(body)
     result
@@ -235,7 +318,6 @@ defmodule Rail do
       {:ok, {:hello, :world}}
 
   """
-
   def normalize(tag) when tag in [:ok, :error], do: {tag, nil}
   def normalize({tag, v1}) when tag in [:ok, :error], do: {tag, v1}
   def normalize({tag, v1, v2}) when tag in [:ok, :error], do: {tag, {v1, v2}}
