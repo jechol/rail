@@ -1,11 +1,6 @@
 defmodule Rail do
-  defmacro __using__(opts) do
-    overrides =
-      if Keyword.get(opts, :override_kernel, true) do
-        [def: 2, defp: 2]
-      else
-        []
-      end
+  defmacro __using__([]) do
+    overrides = [def: 2, defp: 2]
 
     quote do
       import Kernel, except: unquote(overrides)
@@ -35,7 +30,7 @@ defmodule Rail do
     expanded_body = expand_body(body)
 
     quote do
-      def unquote(head), unquote(expanded_body)
+      Kernel.def(unquote(head), unquote(expanded_body))
     end
   end
 
@@ -81,7 +76,7 @@ defmodule Rail do
     expanded_body = expand_body(body)
 
     quote do
-      defp unquote(head), unquote(expanded_body)
+      Kernel.defp(unquote(head), unquote(expanded_body))
     end
   end
 
