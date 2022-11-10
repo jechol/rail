@@ -1,12 +1,15 @@
 defmodule Rail do
-  defmacro __using__([]) do
-    overrides = [def: 2, defp: 2]
+  @overrides [def: 2, defp: 2]
+
+  defmacro __using__(opts) do
+    def_provider = opts |> Keyword.get(:def_provider, Kernel)
+    Module.put_attribute(__CALLER__.module, :def_provider, def_provider)
 
     quote do
-      import Kernel, except: unquote(overrides)
+      import Kernel, except: unquote(@overrides)
 
       import Rail,
-        only: unquote([rail: 1, rail: 2, railp: 2, >>>: 2, map_ok: 2, map_error: 2] ++ overrides)
+        only: unquote([rail: 1, rail: 2, railp: 2, >>>: 2, map_ok: 2, map_error: 2] ++ @overrides)
     end
   end
 
@@ -27,10 +30,12 @@ defmodule Rail do
   ```
   """
   defmacro rail(head, body) do
+    def_provider = Module.get_attribute(__CALLER__.module, :def_provider)
     expanded_body = expand_body(body)
 
     quote do
-      Kernel.def(unquote(head), unquote(expanded_body))
+      require unquote(def_provider)
+      unquote(def_provider).def(unquote(head), unquote(expanded_body))
     end
   end
 
@@ -73,10 +78,12 @@ defmodule Rail do
   ```
   """
   defmacro railp(head, body) do
+    def_provider = Module.get_attribute(__CALLER__.module, :def_provider)
     expanded_body = expand_body(body)
 
     quote do
-      Kernel.defp(unquote(head), unquote(expanded_body))
+      require unquote(def_provider)
+      unquote(def_provider).defp(unquote(head), unquote(expanded_body))
     end
   end
 
