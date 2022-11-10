@@ -3,7 +3,12 @@ defmodule Rail do
 
   defmacro __using__(opts) do
     def_provider = opts |> Keyword.get(:def_provider, Kernel)
-    Module.put_attribute(__CALLER__.module, :def_provider, def_provider)
+
+    Module.put_attribute(
+      __CALLER__.module |> IO.inspect(label: "put_attribute"),
+      :def_provider,
+      def_provider
+    )
 
     quote do
       import Kernel, except: unquote(@overrides)
@@ -30,7 +35,9 @@ defmodule Rail do
   ```
   """
   defmacro rail(head, body) do
-    def_provider = Module.get_attribute(__CALLER__.module, :def_provider)
+    def_provider =
+      Module.get_attribute(__CALLER__.module |> IO.inspect(label: "get_attribute"), :def_provider)
+
     expanded_body = expand_body(body)
 
     quote do
