@@ -34,7 +34,7 @@ defmodule Rail do
   ```
   """
   defmacro rail(head, body) do
-    def_provider = Module.get_attribute(__CALLER__.module, :def_provider)
+    def_provider = Module.get_attribute(__CALLER__.module, :def_provider, Kernel)
     Logger.warn("Module.get_attribute(#{__CALLER__.module}, :def_provider): #{def_provider}")
 
     expanded_body = expand_body(body)
@@ -84,7 +84,7 @@ defmodule Rail do
   ```
   """
   defmacro railp(head, body) do
-    def_provider = Module.get_attribute(__CALLER__.module, :def_provider)
+    def_provider = Module.get_attribute(__CALLER__.module, :def_provider, Kernel)
     Logger.warn("Module.get_attribute(#{__CALLER__.module}, :def_provider): #{def_provider}")
 
     expanded_body = expand_body(body)
