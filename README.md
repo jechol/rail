@@ -11,8 +11,6 @@ It helps you handle error cases at almost no cost with `rail`, `>>>`, and `def` 
 
 If you are not comfortable with "Railway oriented programming", see [Railway oriented programming](https://www.youtube.com/watch?v=fYo3LN9Vf_M)
 
-This library is mostly copied from [SeokminHong/reather-lite](https://github.com/SeokminHong/reather-lite) and removed reader monad related stuffs to lower learning curve.
-
 ## Installation
 
 ```elixir
