@@ -63,7 +63,7 @@ defmodule Rail do
   """
   defmacro def(head, body) do
     quote do
-      rail unquote(head), unquote(body)
+      Rail.rail(unquote(head), unquote(body))
     end
   end
 
@@ -113,7 +113,7 @@ defmodule Rail do
   """
   defmacro defp(head, body) do
     quote do
-      railp unquote(head), unquote(body)
+      Rail.railp(unquote(head), unquote(body))
     end
   end
 
