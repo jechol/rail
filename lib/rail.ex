@@ -220,9 +220,10 @@ defmodule Rail do
       reporter = Process.get(:rail_error_reporter) || Application.get_env(:rail, :error_reporter)
 
       if reporter do
-        {:current_stacktrace,
-         [{Process, _, _, _}, {Rail, _, _, _}, {Rail, _, _, _} | trace] = _trace} =
+        {:current_stacktrace, [{Process, _, _, _} | trace] = _trace} =
           Process.info(self(), :current_stacktrace)
+
+        trace = trace |> Enum.filter(fn tuple -> tuple |> elem(0) != Rail end)
 
         case reporter do
           {module, function, 2} when is_atom(module) and is_atom(function) ->

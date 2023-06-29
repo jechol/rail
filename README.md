@@ -16,7 +16,7 @@ If you are not comfortable with "Railway oriented programming", see [Railway ori
 ```elixir
 def deps do
   [
-    {:rail, "~> 1.0.0"}
+    {:rail, "~> 1.0.1"}
   ]
 end
 ```
