@@ -194,10 +194,12 @@ defmodule Rail do
   """
   @spec chain(any, (any -> any)) :: any
   def chain({:error, _} = error, _) do
+    report(error)
     error
   end
 
   def chain(:error = error, _) do
+    report(error)
     error
   end
 
@@ -207,6 +209,30 @@ defmodule Rail do
 
   def chain(value, fun) when is_function(fun, 1) do
     fun.(value)
+  end
+
+  defp report(error) do
+    reported = Process.get(:rail_reported_errors, [])
+
+    if Enum.member?(reported, error) do
+      {:ok, :already_reported}
+    else
+      Process.put(:rail_reported_errors, [error | reported])
+
+      reporter = Process.get(:rail_error_reporter) || Application.get_env(:rail, :error_reporter)
+      {:current_stacktrace, [_, _ | trace]} = Process.info(self(), :current_stacktrace)
+
+      case reporter do
+        nil ->
+          {:ok, :no_handler}
+
+        {module, function} when is_atom(module) and is_atom(function) ->
+          apply(module, function, [error, trace])
+
+        f when is_function(f, 2) ->
+          f.(error, trace)
+      end
+    end
   end
 
   @doc """
