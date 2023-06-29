@@ -217,25 +217,34 @@ defmodule Rail do
     if Enum.member?(reported, error) do
       {:ok, :already_reported}
     else
-      Process.put(:rail_reported_errors, [error | reported])
-
       reporter = Process.get(:rail_error_reporter) || Application.get_env(:rail, :error_reporter)
 
-      {:current_stacktrace,
-       [{Process, _, _, _}, {Rail, _, _, _}, {Rail, _, _, _} | trace] = _trace} =
-        Process.info(self(), :current_stacktrace)
+      if reporter do
+        {:current_stacktrace,
+         [{Process, _, _, _}, {Rail, _, _, _}, {Rail, _, _, _} | trace] = _trace} =
+          Process.info(self(), :current_stacktrace)
 
-      case reporter do
-        nil ->
-          {:ok, :no_handler}
+        case reporter do
+          {module, function, 2} when is_atom(module) and is_atom(function) ->
+            apply(module, function, [error, trace])
 
-        {module, function, 2} when is_atom(module) and is_atom(function) ->
-          apply(module, function, [error, trace])
+          module when is_atom(module) ->
+            apply(module, :report_error, [error, trace])
 
-        f when is_function(f, 2) ->
-          f.(error, trace)
+          f when is_function(f, 2) ->
+            f.(error, trace)
+        end
+      else
+        {:ok, :no_handler}
       end
+
+      Process.put(:rail_reported_errors, [error | reported])
+      {:ok, :reported}
     end
+  end
+
+  defmodule ErrorReporter do
+    @callback report_error(any, any) :: :ok
   end
 
   @doc """
