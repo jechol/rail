@@ -2,6 +2,14 @@ defmodule RailTest do
   use ExUnit.Case
   use Rail
 
+  setup do
+    Process.put(:rail_error_reporter, fn error, trace ->
+      send(self(), {error, trace})
+    end)
+
+    :ok
+  end
+
   doctest Rail
 
   defmodule Calc do
@@ -25,6 +33,9 @@ defmodule RailTest do
   test "rail/2" do
     assert 5.0 == Calc.div(10, 2)
     assert {:error, :div_by_zero} == Calc.div(10, 0)
+
+    refute_receive 5.0
+    assert_receive {{:error, :div_by_zero}, [{RailTest, _, _, _} | _]}
   end
 
   defmodule Calc2 do

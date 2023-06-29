@@ -220,13 +220,16 @@ defmodule Rail do
       Process.put(:rail_reported_errors, [error | reported])
 
       reporter = Process.get(:rail_error_reporter) || Application.get_env(:rail, :error_reporter)
-      {:current_stacktrace, [_, _ | trace]} = Process.info(self(), :current_stacktrace)
+
+      {:current_stacktrace,
+       [{Process, _, _, _}, {Rail, _, _, _}, {Rail, _, _, _} | trace] = _trace} =
+        Process.info(self(), :current_stacktrace)
 
       case reporter do
         nil ->
           {:ok, :no_handler}
 
-        {module, function} when is_atom(module) and is_atom(function) ->
+        {module, function, 2} when is_atom(module) and is_atom(function) ->
           apply(module, function, [error, trace])
 
         f when is_function(f, 2) ->
