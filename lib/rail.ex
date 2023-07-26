@@ -345,6 +345,8 @@ defmodule Rail do
       :error
       iex> {:error, :noent} |> Rail.map_error(fn :noent -> :not_found end)
       {:error, :not_found}
+      iex> {:ok, 1} |> Rail.map_error(fn :noent -> :not_found end)
+      {:ok, 1}
 
   """
   def map_error({:error, value}, fun) when is_function(fun, 1), do: {:error, fun.(value)}
@@ -373,4 +375,36 @@ defmodule Rail do
   def normalize({tag, v1, v2, v3}) when tag in [:ok, :error], do: {tag, {v1, v2, v3}}
   def normalize({tag, v1, v2, v3, v4}) when tag in [:ok, :error], do: {tag, {v1, v2, v3, v4}}
   def normalize(untagged), do: {:ok, untagged}
+
+  @doc """
+  Return a new tuple for value of {:ok, value}, otherwise bypass
+
+  ## Examples
+
+      iex> :ok |> Rail.flat_map_ok(fn 1 -> {:noreply, 10} end)
+      :ok
+      iex> {:ok, 1} |> Rail.flat_map_ok(fn 1 -> {:noreply, 10} end)
+      {:noreply, 10}
+      iex> {:error, 1} |> Rail.flat_map_ok(fn 1 -> {:noreply, 10} end)
+      {:error, 1}
+
+  """
+  def flat_map_ok({:ok, value}, fun) when is_function(fun, 1), do: fun.(value)
+  def flat_map_ok(other, _), do: other
+
+  @doc """
+  Return a new tuple for error of {:error, error}, otherwise bypass
+
+  ## Examples
+
+      iex> :error |> Rail.flat_map_error(fn :noent -> {:noreply, :not_found} end)
+      :error
+      iex> {:error, :noent} |> Rail.flat_map_error(fn :noent -> {:noreply, :not_found} end)
+      {:noreply, :not_found}
+      iex> {:ok, 1} |> Rail.flat_map_error(fn :noent -> {:noreply, :not_found} end)
+      {:ok, 1}
+
+  """
+  def flat_map_error({:error, value}, fun) when is_function(fun, 1), do: fun.(value)
+  def flat_map_error(other, _), do: other
 end
