@@ -377,7 +377,7 @@ defmodule Rail do
   def normalize(untagged), do: {:ok, untagged}
 
   @doc """
-  Apply a function for value of {:ok, value}, otherwise bypass
+  Return a new tuple for value of {:ok, value}, otherwise bypass
 
   ## Examples
 
@@ -393,7 +393,7 @@ defmodule Rail do
   def flat_map_ok(other, _), do: other
 
   @doc """
-  Apply a function for error of {:error, error}, otherwise bypass
+  Return a new tuple for error of {:error, error}, otherwise bypass
 
   ## Examples
 
