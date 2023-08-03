@@ -389,19 +389,19 @@ defmodule Rail do
   def normalize(untagged), do: {:ok, untagged}
 
   @doc """
-  Return a new tuple for value of {:ok, value}, otherwise bypass
+  Return a new tuple for ok, otherwise bypass
 
   ## Examples
 
-      iex> {:ok, 1} |> Rail.flat_map_ok(fn value -> {:noreply, (value || 10) + 1} end)
+      iex> {:ok, 1} |> Rail.flat_map_ok(fn 1 -> {:noreply, 2} end)
       {:noreply, 2}
-      iex> :ok |> Rail.flat_map_ok(fn value -> {:noreply, (value || 10) + 1} end)
-      {:noreply, 11}
-      iex> 1 |> Rail.flat_map_ok(fn value -> {:noreply, (value || 10) + 1} end)
+      iex> :ok |> Rail.flat_map_ok(fn nil -> {:noreply, 2} end)
       {:noreply, 2}
-      iex> {:error, 1} |> Rail.flat_map_ok(fn value -> {:noreply, (value || 10) + 1} end)
+      iex> 1 |> Rail.flat_map_ok(fn 1 -> {:noreply, 2} end)
+      {:noreply, 2}
+      iex> {:error, 1} |> Rail.flat_map_ok(fn _value -> {:noreply, 2} end)
       {:error, 1}
-      iex> :error |> Rail.flat_map_ok(fn value -> {:noreply, (value || 10) + 1} end)
+      iex> :error |> Rail.flat_map_ok(fn _value -> {:noreply, 2} end)
       :error
 
   """
@@ -413,19 +413,19 @@ defmodule Rail do
   end
 
   @doc """
-  Return a new tuple for error of {:error, error}, otherwise bypass
+  Return a new tuple for error, otherwise bypass
 
   ## Examples
 
-      iex> {:error, 1} |> Rail.flat_map_error(fn value -> {:noreply, (value || 10) + 1} end)
+      iex> {:error, 1} |> Rail.flat_map_error(fn 1 -> {:noreply, 2} end)
       {:noreply, 2}
-      iex> :error |> Rail.flat_map_error(fn value -> {:noreply, (value || 10) + 1} end)
-      {:noreply, 11}
-      iex> {:ok, 1} |> Rail.flat_map_error(fn value -> {:noreply, (value || 10) + 1} end)
+      iex> :error |> Rail.flat_map_error(fn nil -> {:noreply, 2} end)
+      {:noreply, 2}
+      iex> {:ok, 1} |> Rail.flat_map_error(fn _value -> {:noreply, 2} end)
       {:ok, 1}
-      iex> :ok |> Rail.flat_map_error(fn value -> {:noreply, (value || 10) + 1} end)
+      iex> :ok |> Rail.flat_map_error(fn _value -> {:noreply, 2} end)
       :ok
-      iex> 1 |> Rail.flat_map_error(fn value -> {:noreply, (value || 10) + 1} end)
+      iex> 1 |> Rail.flat_map_error(fn _value -> {:noreply, 2} end)
       1
 
   """
