@@ -13,7 +13,19 @@ defmodule Rail do
       import Kernel, except: unquote(@overrides)
 
       import Rail,
-        only: unquote([rail: 1, rail: 2, railp: 2, >>>: 2, map_ok: 2, map_error: 2] ++ @overrides)
+        only:
+          unquote(
+            [
+              rail: 1,
+              rail: 2,
+              railp: 2,
+              >>>: 2,
+              map_ok: 2,
+              map_error: 2,
+              flat_map_ok: 2,
+              flat_map_error: 2
+            ] ++ @overrides
+          )
     end
   end
 
