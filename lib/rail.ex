@@ -13,7 +13,19 @@ defmodule Rail do
       import Kernel, except: unquote(@overrides)
 
       import Rail,
-        only: unquote([rail: 1, rail: 2, railp: 2, >>>: 2, map_ok: 2, map_error: 2] ++ @overrides)
+        only:
+          unquote(
+            [
+              rail: 1,
+              rail: 2,
+              railp: 2,
+              >>>: 2,
+              map_ok: 2,
+              map_error: 2,
+              flat_map_ok: 2,
+              flat_map_error: 2
+            ] ++ @overrides
+          )
     end
   end
 
@@ -377,34 +389,50 @@ defmodule Rail do
   def normalize(untagged), do: {:ok, untagged}
 
   @doc """
-  Return a new tuple for value of {:ok, value}, otherwise bypass
+  Return a new tuple for ok, otherwise bypass
 
   ## Examples
 
-      iex> :ok |> Rail.flat_map_ok(fn 1 -> {:noreply, 10} end)
-      :ok
-      iex> {:ok, 1} |> Rail.flat_map_ok(fn 1 -> {:noreply, 10} end)
-      {:noreply, 10}
-      iex> {:error, 1} |> Rail.flat_map_ok(fn 1 -> {:noreply, 10} end)
+      iex> {:ok, 1} |> Rail.flat_map_ok(fn 1 -> {:noreply, 2} end)
+      {:noreply, 2}
+      iex> :ok |> Rail.flat_map_ok(fn nil -> {:noreply, 2} end)
+      {:noreply, 2}
+      iex> 1 |> Rail.flat_map_ok(fn 1 -> {:noreply, 2} end)
+      {:noreply, 2}
+      iex> {:error, 1} |> Rail.flat_map_ok(fn _value -> {:noreply, 2} end)
       {:error, 1}
+      iex> :error |> Rail.flat_map_ok(fn _value -> {:noreply, 2} end)
+      :error
 
   """
-  def flat_map_ok({:ok, value}, fun) when is_function(fun, 1), do: fun.(value)
-  def flat_map_ok(other, _), do: other
+  def flat_map_ok(result, fun) when is_function(fun, 1) do
+    case normalize(result) do
+      {:ok, value} -> fun.(value)
+      {:error, _error} -> result
+    end
+  end
 
   @doc """
-  Return a new tuple for error of {:error, error}, otherwise bypass
+  Return a new tuple for error, otherwise bypass
 
   ## Examples
 
-      iex> :error |> Rail.flat_map_error(fn :noent -> {:noreply, :not_found} end)
-      :error
-      iex> {:error, :noent} |> Rail.flat_map_error(fn :noent -> {:noreply, :not_found} end)
-      {:noreply, :not_found}
-      iex> {:ok, 1} |> Rail.flat_map_error(fn :noent -> {:noreply, :not_found} end)
+      iex> {:error, 1} |> Rail.flat_map_error(fn 1 -> {:noreply, 2} end)
+      {:noreply, 2}
+      iex> :error |> Rail.flat_map_error(fn nil -> {:noreply, 2} end)
+      {:noreply, 2}
+      iex> {:ok, 1} |> Rail.flat_map_error(fn _value -> {:noreply, 2} end)
       {:ok, 1}
+      iex> :ok |> Rail.flat_map_error(fn _value -> {:noreply, 2} end)
+      :ok
+      iex> 1 |> Rail.flat_map_error(fn _value -> {:noreply, 2} end)
+      1
 
   """
-  def flat_map_error({:error, value}, fun) when is_function(fun, 1), do: fun.(value)
-  def flat_map_error(other, _), do: other
+  def flat_map_error(result, fun) when is_function(fun, 1) do
+    case normalize(result) do
+      {:error, error} -> fun.(error)
+      {:ok, _value} -> result
+    end
+  end
 end
