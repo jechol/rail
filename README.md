@@ -1,9 +1,8 @@
 # Rail
 
-[![test](https://github.com/jechol/rail/actions/workflows/test.yml/badge.svg)](https://github.com/jechol/rail/actions/workflows/test.yml)
+[![test](https://github.com/jechol/rail/actions/workflows/elixir.yml/badge.svg)](https://github.com/jechol/rail/actions/workflows/elixir.yml)
 [![Coverage Status](https://coveralls.io/repos/github/jechol/rail/badge.svg?branch=main)](https://coveralls.io/github/jechol/rail?branch=main)
 [![Hex.pm](https://img.shields.io/hexpm/v/rail)](https://hex.pm/packages/rail)
-[![GitHub](https://img.shields.io/github/license/jechol/rail)](https://github.com/jechol/rail/blob/main/LICENSE)
 
 `Rail` is a helper macros for "Railway oriented programming".
 

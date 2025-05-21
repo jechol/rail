@@ -42,8 +42,8 @@ defmodule Rail.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:dialyxir, "~> 1.2", only: [:dev, :test], runtime: false},
-      {:excoveralls, "~> 0.10", only: :test},
+      {:dialyxir, ">= 0.0.0", only: [:dev, :test], runtime: false},
+      {:excoveralls, ">= 0.0.0", only: :test},
       {:ex_doc, ">= 0.0.0", only: :dev, runtime: false}
     ]
   end
